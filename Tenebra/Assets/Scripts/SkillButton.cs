@@ -15,7 +15,7 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     private float posX;
     private float posZ;
     public Joystick joy;
-    public Transform[] limites;
+    public Image[] limites;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,12 +34,34 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         //float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
         if (isMoving)
         {
-            posX += (joy.Horizontal / 10);
-            posY += (joy.Vertical / 10);
-            posZ += (joy.Vertical / 15);
+            posX += (joy.Horizontal / 4);
+            posY += (joy.Vertical / 4);
+            posZ += (joy.Vertical / 6);
+            
+            if (posX > limites[3].rectTransform.anchoredPosition3D.x)
+            {
+                posX = limites[3].rectTransform.anchoredPosition3D.x;
+                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+            }
+            if (posX < limites[1].rectTransform.anchoredPosition3D.x)
+            {
+                posX = limites[1].rectTransform.anchoredPosition3D.x;
+                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+            }
+            if (posY > limites[2].rectTransform.anchoredPosition3D.y)
+            {
+                posY = limites[2].rectTransform.anchoredPosition3D.y;
+                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+            }
+            if (posY < limites[0].rectTransform.anchoredPosition3D.y)
+            {
+                posY = limites[0].rectTransform.anchoredPosition3D.y;
+                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+            }
+
+            
+            
             skillAreaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
-            
-            
         }
         Vector3 difference = skillAreaEffect.transform.position - player.transform.position;
         float rotationZ = Mathf.Atan2(difference.z, difference.x) * Mathf.Rad2Deg;

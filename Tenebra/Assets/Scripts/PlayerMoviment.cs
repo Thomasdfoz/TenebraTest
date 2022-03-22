@@ -17,6 +17,7 @@ public enum WaeponType
 }
 public class PlayerMoviment : MonoBehaviour
 {
+    public int level;
 
     public AnimationClip animSpecialAttack;
     public BuffedManager buffedManager;
@@ -57,8 +58,7 @@ public class PlayerMoviment : MonoBehaviour
     [SerializeField] private int chanceCritic;
     [SerializeField] private bool isSpecialAttack;
 
-    [Range(25, 200)]
-    public float myAttackSpeed;
+    [Range(25, 200)] public float myAttackSpeed;
     private float moveSpeed = 0;
     public LayerMask layer;
     private bool isWalk;
@@ -80,6 +80,10 @@ public class PlayerMoviment : MonoBehaviour
             if (value > 200)
             {
                 myAttackSpeed = 200;
+            }
+            else if (value < 25)
+            {
+                myAttackSpeed = 25;
             }
             else
             {
@@ -261,11 +265,18 @@ public class PlayerMoviment : MonoBehaviour
         readyAttack = true;
 
     }
+   
+    public long formula(long level)
+    {
+        if (level <= 1)
+            return 50;
+        else
+            return ((100 * ((level * level) / 4)) + formula(level - 1));
 
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
-
         arcoRange.transform.localScale = new Vector3(range, range, 1);
         attackSpeedAnim = myAttackSpeed / 100;
         if (myAttackSpeed < 80)
@@ -315,8 +326,8 @@ public class PlayerMoviment : MonoBehaviour
         if (attacking)
         {
 
-            
-            LookTarget();       
+
+            LookTarget();
             if (readyAttack && isLookTarget)
             {
                 playerAnim.SetTrigger("attack");
@@ -334,7 +345,7 @@ public class PlayerMoviment : MonoBehaviour
         {
             StartCoroutine("LookTargetTime", 0.3f);
         }
-        
+
 
     }
     private IEnumerator LookTargetTime(float time)
@@ -381,12 +392,9 @@ public class PlayerMoviment : MonoBehaviour
         {
             selectedTarget.GetComponent<Outline>().OutlineWidth = 2;
         }
-        if (attacking == false)
-        {
-            attacking = true;
-        }
+        attacking = true;
     }
-   
+
 
     private IEnumerator CoroutineAttack()
     {
