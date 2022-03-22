@@ -15,7 +15,7 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     private float posX;
     private float posZ;
     public Joystick joy;
-    public Image[] limites;
+    public RectTransform[] limites;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,37 +30,41 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     // Update is called once per frame
     void FixedUpdate()
     {
-       // Vector3 direction = player.transform.position;
+        // Vector3 direction = player.transform.position;
         //float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
         if (isMoving)
         {
             posX += (joy.Horizontal / 4);
             posY += (joy.Vertical / 4);
             posZ += (joy.Vertical / 6);
-            
-            if (posX > limites[3].rectTransform.anchoredPosition3D.x)
+
+            if (posX > limites[3].anchoredPosition3D.x)
             {
-                posX = limites[3].rectTransform.anchoredPosition3D.x;
-                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+                posX = limites[3].anchoredPosition3D.x;
             }
-            if (posX < limites[1].rectTransform.anchoredPosition3D.x)
+            if (posX < limites[1].anchoredPosition3D.x)
             {
-                posX = limites[1].rectTransform.anchoredPosition3D.x;
-                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+                posX = limites[1].anchoredPosition3D.x;
             }
-            if (posY > limites[2].rectTransform.anchoredPosition3D.y)
+            if (posY > limites[2].anchoredPosition3D.y)
             {
-                posY = limites[2].rectTransform.anchoredPosition3D.y;
-                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+                posY = limites[2].anchoredPosition3D.y;
             }
-            if (posY < limites[0].rectTransform.anchoredPosition3D.y)
+            if (posY < limites[0].anchoredPosition3D.y)
             {
-                posY = limites[0].rectTransform.anchoredPosition3D.y;
-                posZ = skillAreaEffect.rectTransform.anchoredPosition3D.z;
+                posY = limites[0].anchoredPosition3D.y;
+            }
+            if (posZ > -260f)
+            {
+                posZ = -260;
+            }
+            if (posZ < -273.7f)
+            {
+                posZ = -273.7f;
             }
 
-            
-            
+
+
             skillAreaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
         }
         Vector3 difference = skillAreaEffect.transform.position - player.transform.position;
