@@ -17,8 +17,8 @@ public enum WaeponType
 }
 public class PlayerMoviment : MonoBehaviour
 {
-    public int level;
-
+    [Header("Main")]
+    public GameObject PlayerMain;
     public AnimationClip animSpecialAttack;
     public BuffedManager buffedManager;
     [Header("Selected")]
@@ -62,7 +62,7 @@ public class PlayerMoviment : MonoBehaviour
     private float moveSpeed = 0;
     public LayerMask layer;
     private bool isWalk;
-    private CharacterController controller;
+    public CharacterController controller;
     private Animator playerAnim;
     private RaycastHit hit;
     private bool attacking;
@@ -257,7 +257,7 @@ public class PlayerMoviment : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        controller = PlayerMain.GetComponent<CharacterController>();
         playerAnim = GetComponent<Animator>();
         miraX = mira.transform.position.x;
         miraY = mira.transform.position.y;

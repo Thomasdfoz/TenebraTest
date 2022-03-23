@@ -21,9 +21,9 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         joy = GetComponentInChildren<FixedJoystick>();
         joy.gameObject.SetActive(false);
-        posY = 0;
+        posY = -1;
         posX = 0;
-        posZ = -267f;
+        posZ = 0;
 
     }
 
@@ -35,8 +35,7 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (isMoving)
         {
             posX += (joy.Horizontal / 4);
-            posY += (joy.Vertical / 4);
-            posZ += (joy.Vertical / 6);
+            posZ += (joy.Vertical / 4);
 
             if (posX > limites[3].anchoredPosition3D.x)
             {
@@ -46,22 +45,16 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             {
                 posX = limites[1].anchoredPosition3D.x;
             }
-            if (posY > limites[2].anchoredPosition3D.y)
+            if (posZ > limites[2].anchoredPosition3D.z)
             {
-                posY = limites[2].anchoredPosition3D.y;
+                posZ = limites[2].anchoredPosition3D.z;
             }
-            if (posY < limites[0].anchoredPosition3D.y)
+            if (posZ < limites[0].anchoredPosition3D.z)
             {
-                posY = limites[0].anchoredPosition3D.y;
+                posZ = limites[0].anchoredPosition3D.z;
+
             }
-            if (posZ > -260f)
-            {
-                posZ = -260;
-            }
-            if (posZ < -273.7f)
-            {
-                posZ = -273.7f;
-            }
+
 
 
 
@@ -85,9 +78,9 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         joy.OnPointerUp(data);
 
         isMoving = false;
-        posY = 0;
+        posY = -1;
         posX = 0;
-        posZ = -267f;
+        posZ = 0;
 
     }
     public void OnPointerDown(PointerEventData data)
