@@ -5,17 +5,7 @@ using UnityEngine;
 public class BuffedManager : MonoBehaviour
 {
     private float valueTemp;
-    public PlayerMoviment playerMoviment;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    public PlayerStats playerStats;
     public void Buff(float time, float value, BuffedType buffedType)
     {
         BuffedOrNerfed(value, buffedType);
@@ -37,31 +27,31 @@ public class BuffedManager : MonoBehaviour
         switch (buffedType)
         {
             case BuffedType.Damage:
-                valueTemp = playerMoviment.MyDamage;
-                playerMoviment.MyDamage = value;
+                valueTemp = playerStats.Damage;
+                playerStats.Damage = value;
                 break;
             case BuffedType.AttackSpeed:
-                valueTemp = playerMoviment.MyAttackSpeed;
-                playerMoviment.MyAttackSpeed = value;
+                valueTemp = playerStats.AttackSpeed;
+                playerStats.AttackSpeed = value;
 
                 break;
             case BuffedType.Armor:
-                valueTemp = playerMoviment.MyArmor;
-                playerMoviment.MyArmor = value;
+                valueTemp = playerStats.Defense;
+                playerStats.Defense= value;
 
                 break;
             case BuffedType.Resistence:
-                valueTemp = playerMoviment.MyResistence;
-                playerMoviment.MyResistence = value;
+                valueTemp = playerStats.Resistence;
+                playerStats.Resistence = value;
 
                 break;
             case BuffedType.Life:
-                valueTemp = playerMoviment.MyLife;
-                playerMoviment.MyLife = value;
+                valueTemp = playerStats.Life.CurrentValue;
+                playerStats.Life.CurrentValue = Mathf.FloorToInt(value);
                 break;
             case BuffedType.MoveSpeed:
-                valueTemp = playerMoviment.MyMoveSpeed;
-                playerMoviment.MyMoveSpeed = value;
+                valueTemp = playerStats.MoveSpeed;
+                playerStats.MoveSpeed = value;
                 break;
             default:
                 break;

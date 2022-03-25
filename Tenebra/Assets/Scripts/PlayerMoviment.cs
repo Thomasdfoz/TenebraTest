@@ -287,7 +287,7 @@ public class PlayerMoviment : MonoBehaviour
         playerAnim.SetBool("isWalk", isWalk);
         Move();
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             AttackSelected();
         }
