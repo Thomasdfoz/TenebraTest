@@ -1,22 +1,15 @@
 public abstract class GenericSkillClass : IGenericSkillClass
 {
-    protected int currentLevel;
-    private double currentExp;
-    protected double previousExpLevel;
-    protected double nextExpLevel;
-    public virtual int CurrentLevel
+    protected long currentLevel;
+    private long currentExp;
+    protected long previousExpLevel;
+    protected long nextExpLevel;
+    public long CurrentLevel
     {
         get => currentLevel;
-        set
-        {
-            if (value < 1)
-            {
-                value = 1;
-            }
-            currentLevel += value;
-        }
+        
     }
-    public double CurrentExp
+    public long CurrentExp
     {
         get => currentExp;
         set
@@ -25,7 +18,7 @@ public abstract class GenericSkillClass : IGenericSkillClass
             {
                 value = 0;
             }
-            currentExp += value;
+            currentExp = value;
             if (currentExp > nextExpLevel)
             {
                 levelUp(currentExp);
@@ -36,11 +29,11 @@ public abstract class GenericSkillClass : IGenericSkillClass
             }
         }
     }
-    public double PreviousExpLevel { get => previousExpLevel; }
-    public double NextExpLevel { get => nextExpLevel; }
+    public long PreviousExpLevel { get => previousExpLevel; }
+    public long NextExpLevel { get => nextExpLevel; }
 
 
-    public virtual void levelUp(double curtExp)
+    public virtual void levelUp(long curtExp)
     {
         currentLevel++;
         SetExp(currentLevel);
@@ -49,7 +42,7 @@ public abstract class GenericSkillClass : IGenericSkillClass
             levelUp(currentExp);
         }
     }
-    public virtual void levelDown(double curtExp)
+    public virtual void levelDown(long curtExp)
     {
         currentLevel--;
         SetExp(currentLevel);
@@ -58,10 +51,11 @@ public abstract class GenericSkillClass : IGenericSkillClass
             levelDown(currentLevel);
         }
     }
-    public abstract double Formula(int level);
-    public void SetExp(int level)
+    public abstract long Formula(long level);
+    public void SetExp(long level)
     {
         nextExpLevel = Formula(level);
         previousExpLevel = Formula(level - 1);
+
     }
 }
