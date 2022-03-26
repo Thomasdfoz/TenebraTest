@@ -5,6 +5,14 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    [Header("Main")]
+    public GameObject Player;
+    PlayerController playerController;
+    PlayerStats playerStats;
+
+
+
+    [Header("Buttons")]
     public GameObject btnMoviment;
     public Button[] btnSkills;
     public Button[] btnPotions;
@@ -17,11 +25,28 @@ public class GameController : MonoBehaviour
     void Start()
     {
         colorBtnStandard = btnMoviment.GetComponent<Image>().color;
+        playerStats = Player.GetComponent<PlayerStats>();
+        playerController = Player.GetComponent<PlayerController>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerStats.Life.CurrentValue <= 0)
+        {
+            Player.gameObject.SetActive(false);
+            playerStats.IsDead = true;
+            Debug.Log("morto");
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            playerStats.TookDamage(new SendDamage(20, 30, DamageType.physical));
+        }
+        {
+
+        }
+        //test
         if (Input.GetKeyDown(KeyCode.A))
         {
             DisableBtnSkills();
@@ -29,6 +54,7 @@ public class GameController : MonoBehaviour
             DisableBtnMoviment();
             DisableBtnPotions();
         }
+        //test
         if (Input.GetKeyDown(KeyCode.B))
         {
             EnableBtnAttack();
@@ -37,6 +63,7 @@ public class GameController : MonoBehaviour
             EnableBtnSkills();
         }
     }
+    #region ----------------Enable and Disable Buttons---------------
     public void DisableBtnSkills()
     {
         btnSkills[0].interactable = false;
@@ -72,7 +99,7 @@ public class GameController : MonoBehaviour
         btnMoviment.GetComponent<Image>().color = colorBtnBlack;
         Image hand = btnMoviment.GetComponentsInChildren<Image>()[1];
         hand.color = colorBtnBlack;
-             
+
     }
     public void EnableBtnMoviment()
     {
@@ -109,6 +136,6 @@ public class GameController : MonoBehaviour
         btnPotions[1].interactable = true;
         btnPotions[1].GetComponent<Image>().color = colorBtnStandard;
     }
-
+    #endregion
 
 }

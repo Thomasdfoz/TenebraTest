@@ -47,7 +47,7 @@ public class BuffedManager : MonoBehaviour
                 break;
             case BuffedType.Life:
                 valueTemp = target.Life.CurrentValue;
-                target.Life.CurrentValue = Mathf.FloorToInt(value);
+                target.Life.Gain(Mathf.FloorToInt(value));
                 break;
             case BuffedType.MoveSpeed:
                 valueTemp = target.MoveSpeed;

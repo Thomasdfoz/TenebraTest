@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    #region ------------------------Main--------------------------
-    WaeponType waeponType;
+    #region ------------------------Main---------------------------
     public BuffedManager buffedManager;
+    private WaeponType waeponType;
+    private DamageType damageType;
+    private bool isDead;
     #endregion
-
     #region ------------------------Stats--------------------------
     private AttributesClass life = new AttributesClass(100);
     private AttributesClass mana = new AttributesClass(10);
@@ -19,27 +20,28 @@ public class PlayerStats : MonoBehaviour
     private float moveSpeed;
     private float attackSpeed;
     private float range;
+    private int chanceCritic;
     #endregion
-
-    #region ------------------------Skills--------------------------
+    #region ------------------------Skills-------------------------
     private SkillClass meleeSkill = new SkillClass();
     private SkillClass distanceSkill = new SkillClass();
     private SkillClass magicSkill = new SkillClass();
     private SkillClass defenseSkill = new SkillClass();
-
+    #endregion
+    #region ------------------------Gets and Setters---------------
     public float Damage
     {
         get
         {
-            if (waeponType == WaeponType.melee)
+            if (WaeponType == WaeponType.melee)
             {
                 return (damage * (MeleeSkill.CurrentLevel / 100)) + damage;
             }
-            else if (waeponType == WaeponType.distance)
+            else if (WaeponType == WaeponType.distance)
             {
                 return ((DistanceSkill.CurrentLevel / 100) * damage) + damage;
             }
-            else if (waeponType == WaeponType.magic)
+            else if (WaeponType == WaeponType.magic)
             {
                 return ((MagicSkill.CurrentLevel / 100) * damage) + damage;
             }
@@ -119,11 +121,11 @@ public class PlayerStats : MonoBehaviour
         get => range;
         set
         {
-            if (range > 8)
+            if (value > 8)
             {
                 range = 8;
             }
-            else if (range < 1.5f)
+            else if (value < 1.5f)
             {
                 range = 1.5f;
             }
@@ -139,67 +141,76 @@ public class PlayerStats : MonoBehaviour
     public SkillClass DefenseSkill { get => defenseSkill; set => defenseSkill = value; }
     public AttributesClass Life { get => life; set => life = value; }
     public AttributesClass Mana { get => mana; set => mana = value; }
+    public int ChanceCritic { get => chanceCritic; set => chanceCritic = value; }
+    public WaeponType WaeponType { get => waeponType; set => waeponType = value; }
+    public DamageType DamageType { get => damageType; set => damageType = value; }
+    public bool IsDead { get => isDead; set => isDead = value; }
     #endregion
 
 
     // Start is called before the first frame update
     void Start()
     {
+        Range = 15;
         MoveSpeed = 1;
-        Range = 1;
         Damage = 1;
         AttackSpeed = 1;
-        Defense = 0;
+        Defense = 100;
         Resistence = 0;
-
+        
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
+        Debug.Log(Life.CurrentValue);
     }
+
+    #region ------------------------My Functions-------------------
     public void TookDamage(SendDamage sendDamage)
     {
-
-        int damageEnemy = sendDamage.Damage;
-        DamageType t = sendDamage.DamageType;
-        int criticalChance = sendDamage.CriticalChance;
-        float damage = 0;
-        float defenseTemp = 0;
-        float defensed = 0;
-        int damageTaken = 0;
-        if (t == DamageType.magic)
+        if (!IsDead)
         {
-            damage = damageEnemy;
-            defenseTemp = Random.Range(Resistence * 0.1f, Resistence);
-
-        }
-        else if (t == DamageType.physical)
-        {
-
-            if (Critic.IsCritic(criticalChance))
+            int damageEnemy = sendDamage.Damage;
+            DamageType t = sendDamage.DamageType;
+            int criticalChance = sendDamage.CriticalChance;
+            float damage = 0;
+            float defenseTemp = 0;
+            float defensed = 0;
+            int damageTaken = 0;
+            if (t == DamageType.magic)
             {
-                damage = Random.Range(damageEnemy, damageEnemy * 2);
-                Debug.Log("Critico");
+                damage = damageEnemy;
+                defenseTemp = Random.Range(Resistence * 0.1f, Resistence);
+
             }
-            else
+            else if (t == DamageType.physical)
             {
-                damage = Random.Range((damageEnemy * 0.1f), damageEnemy);
+
+                if (Critic.IsCritic(criticalChance))
+                {
+                    damage = Random.Range(damageEnemy, damageEnemy * 2);
+                    Debug.Log("Critico");
+                }
+                else
+                {
+                    damage = Random.Range((damageEnemy * 0.1f), damageEnemy);
+                }
+
+                defenseTemp = Random.Range(Defense * 0.1f, Defense);
             }
 
-            defenseTemp = Random.Range(Defense * 0.1f, Defense);
+            defensed = 1 - (defenseTemp / 500);
+            if (defensed < 0.1f) defensed = 0.1f;
+            damageTaken = Mathf.FloorToInt(damage * defensed);
+            Life.Loses(damageTaken);
+            Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + Damage);
         }
-
-        defensed = 1 - (defenseTemp / 500);
-        if (defensed < 0.1f) defensed = 0.1f;
-        damageTaken = Mathf.FloorToInt(damage * defensed);
-        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + Damage);
+        
     }
     public void Buff()
     {
         buffedManager.Buff(2, 100, BuffedType.Armor, this);
     }
-
-
+#endregion
 }

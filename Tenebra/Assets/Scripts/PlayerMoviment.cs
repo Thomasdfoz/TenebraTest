@@ -383,7 +383,7 @@ public class PlayerMoviment : MonoBehaviour
         if (animSpecialAttack.events.Length <= 0)
         {
             AnimationEvent AnimEvent = new AnimationEvent();
-            AnimEvent.functionName = "SpecialAttackDamage";
+            AnimEvent.functionName = "AutoAttackSpecial";
             AnimEvent.time = 0.33f;
             AnimEvent.stringParameter = parms;
             animSpecialAttack.AddEvent(AnimEvent);
@@ -395,7 +395,7 @@ public class PlayerMoviment : MonoBehaviour
         StopCoroutine("CoroutineAttack");
         playerAnim.SetTrigger("specialAttack");
     }
-    private void SpecialAttackDamage(string parms)
+    private void AutoAttackSpecial(string parms)
     {
         string[] cut = parms.Split('/');
         string StringType = cut[0];
@@ -418,7 +418,7 @@ public class PlayerMoviment : MonoBehaviour
         }
         StartCoroutine("CoroutineAttack");
     }
-    private void AutoAttackDamage()
+    public void AutoAttackMelee()
     {
         SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(MyDamage), chanceCritic, damageType);
         if (selectedTarget)

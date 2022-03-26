@@ -12,33 +12,23 @@ public class AttributesClass
         get => maxValue;
         set
         {
-            if (value < 0)
-            {
-                maxValue = 0;
-            }
-            else
-            {
-                maxValue = value;
-            }
+            maxValue += value;
+            if (maxValue < 0) maxValue = 0;
         }
     }
     public int CurrentValue
     {
         get => currentValue;
-        set
-        {
-            if (value > maxValue)
-            {
-                currentValue = MaxValue;
-            }
-            else if (value < 0)
-            {
-                currentValue = 0;
-            }
-            else
-            {
-                currentValue = value;
-            }
-        }
+
+    }
+    public void Gain(int value)
+    {
+        currentValue += value;
+        if (currentValue > maxValue) currentValue = MaxValue;
+    }
+    public void Loses(int value)
+    {
+        currentValue -= value;
+        if (currentValue < 0) currentValue = 0;
     }
 }

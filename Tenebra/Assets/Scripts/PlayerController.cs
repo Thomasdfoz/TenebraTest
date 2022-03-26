@@ -3,15 +3,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-    [Header("Joysticks")]
-    public FixedJoystick joystick;
+    #region ------------------------Variables-------------------
+    [Header("GameController")]
+    public GameController gameController;
+    
     [Header("Main")]
-    public PlayerStats playerStats;
+    public GameObject playerBody;
+    public GameObject circleRange;
     public LayerMask layer;
-    public Animator playerAnim;
+    private PlayerStats playerStats;
+    private Animator playerAnim;
 
 
+    private FixedJoystick joystickMoviment;
     private GameObject selectedTarget;
     private bool isWalk;
     public CharacterController controller;
@@ -20,22 +24,16 @@ public class PlayerController : MonoBehaviour
     private bool readyAttack;
     private bool isLookTarget;
     private float attackSpeedAnim;
+    #endregion
 
     public GameObject SelectedTarget { get => selectedTarget; set => selectedTarget = value; }
-
-
-
-
-
-
-
-
-
-
     // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        playerAnim = playerBody.GetComponent<Animator>();
+        playerStats = GetComponent<PlayerStats>();
+        joystickMoviment = gameController.btnMoviment.GetComponent<FixedJoystick>();
+        circleRange.SetActive(false);
         readyAttack = true;
         attacking = false;
         isLookTarget = false;
@@ -60,6 +58,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Animations();
     }
+    #region ----------------------My Functions------------------
     private void Animations()
     {
         attackSpeedAnim = playerStats.AttackSpeed / 100;
@@ -74,15 +73,14 @@ public class PlayerController : MonoBehaviour
     {
         playerAnim.SetTrigger(trigger);
     }
-
     private void Move()
     {
-        float horizontal = joystick.Horizontal;
-        float vertical = joystick.Vertical;
+        float horizontal = joystickMoviment.Horizontal;
+        float vertical = joystickMoviment.Vertical;
         float SpeedH = 0;
         float SpeedV = 0;
         float moveSpeed = 0;
-        
+
 
         if (horizontal < 0)
         {
@@ -127,7 +125,7 @@ public class PlayerController : MonoBehaviour
         if (direction.magnitude > 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, targetAngle, 0);
+            playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.Euler(0, targetAngle, 0), Time.deltaTime * 7f);
             isWalk = true;
             attacking = false;
             isLookTarget = false;
@@ -146,12 +144,11 @@ public class PlayerController : MonoBehaviour
         }
         controller.Move(direction * moveSpeed * Time.deltaTime);
     }
-
     public void LookTarget(Transform lookTarget)
     {
         Vector3 targ = new Vector3(lookTarget.position.x, -0.5f, lookTarget.position.z);
-        Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - transform.position, 5f, 5f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 7f);
+        Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - playerBody.transform.position, 5f, 5f);
+        playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 7f);
         if (!isLookTarget)
         {
             StartCoroutine("LookTargetTime", 0.3f);
@@ -165,6 +162,7 @@ public class PlayerController : MonoBehaviour
     }
     public void RangedSelectTarget()
     {
+        circleRange.transform.localScale = new Vector3(playerStats.Range, playerStats.Range, 1);
         SelectedTarget = SelectedingSphere();
     }
     public GameObject SelectedingSphere()
@@ -190,7 +188,6 @@ public class PlayerController : MonoBehaviour
         }
         return t;
     }
-
     public void AttackSelected()
     {
         if (SelectedTarget != null)
@@ -205,4 +202,13 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(playerStats.AttackSpeed);
         readyAttack = true;
     }
+    public void AutoAttackMelee()
+    {
+        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(playerStats.Damage), playerStats.ChanceCritic, playerStats.DamageType);
+        if (selectedTarget)
+        {
+            selectedTarget.SendMessage("TookDamage", sendDamage);
+        }
+    }
+    #endregion
 }
