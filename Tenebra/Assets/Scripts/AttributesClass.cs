@@ -12,11 +12,13 @@ public class AttributesClass
         get => maxValue;
         set
         {
-            maxValue += value;
-
-            if (maxValue < 0)
+            if (value < 0)
             {
                 maxValue = 0;
+            }
+            else
+            {
+                maxValue = value;
             }
         }
     }
@@ -25,15 +27,17 @@ public class AttributesClass
         get => currentValue;
         set
         {
-            currentValue += value;
-
-            if (currentValue > maxValue)
+            if (value > maxValue)
             {
                 currentValue = MaxValue;
             }
-            else if (currentValue < 0)
+            else if (value < 0)
             {
                 currentValue = 0;
+            }
+            else
+            {
+                currentValue = value;
             }
         }
     }

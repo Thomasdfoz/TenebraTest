@@ -3,18 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum DamageType
-{
-    physical,
-    magic
-}
-public enum WaeponType
-{
-    none,
-    melee,
-    distance,
-    magic
-}
 public class PlayerMoviment : MonoBehaviour
 {
     [Header("Main")]
@@ -257,7 +245,7 @@ public class PlayerMoviment : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        controller = PlayerMain.GetComponent<CharacterController>();
+        controller = GetComponent<CharacterController>();
         playerAnim = GetComponent<Animator>();
         miraX = mira.transform.position.x;
         miraY = mira.transform.position.y;
@@ -265,16 +253,7 @@ public class PlayerMoviment : MonoBehaviour
         readyAttack = true;
 
     }
-   
-    public long formula(long level)
-    {
-        if (level <= 1)
-            return 50;
-        else
-            return ((100 * ((level * level) / 4)) + formula(level - 1));
-
-    }
-    // Update is called once per frame
+   // Update is called once per frame
     void FixedUpdate()
     {
         arcoRange.transform.localScale = new Vector3(range, range, 1);
@@ -287,10 +266,6 @@ public class PlayerMoviment : MonoBehaviour
         playerAnim.SetBool("isWalk", isWalk);
         Move();
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            AttackSelected();
-        }
         if (miraBolean)
         {
             miraX += (joystickMira.Horizontal * 3);
@@ -451,6 +426,7 @@ public class PlayerMoviment : MonoBehaviour
             selectedTarget.SendMessage("TookDamage", sendDamage);
         }
     }
+
     public void Move()
     {
         float horizontal = joystick.Horizontal;
@@ -573,17 +549,4 @@ public class PlayerMoviment : MonoBehaviour
             return false;
         }
     }
-    public void Buff()
-    {
-        buffedManager.Buff(2, 100, BuffedType.Armor);
-    }
-}
-public enum BuffedType
-{
-    Damage,
-    AttackSpeed,
-    Armor,
-    Resistence,
-    Life,
-    MoveSpeed
 }

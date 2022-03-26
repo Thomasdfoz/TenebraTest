@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
+    #region ------------------------Main--------------------------
+    WaeponType waeponType;
+    public BuffedManager buffedManager;
+    #endregion
+
     #region ------------------------Stats--------------------------
     private AttributesClass life = new AttributesClass(100);
     private AttributesClass mana = new AttributesClass(10);
@@ -15,57 +20,13 @@ public class PlayerStats : MonoBehaviour
     private float attackSpeed;
     private float range;
     #endregion
-     
+
     #region ------------------------Skills--------------------------
     private SkillClass meleeSkill = new SkillClass();
     private SkillClass distanceSkill = new SkillClass();
     private SkillClass magicSkill = new SkillClass();
     private SkillClass defenseSkill = new SkillClass();
-    #endregion
 
-    #region ------------------------Main--------------------------
-    public GameObject player;
-    public GameObject playerBody;
-    public GameObject canvasPlayer;
-    public PlayerMoviment playerMoviment;
-    public GameController gameController;
-    private WaeponType waeponType;
-    #endregion
-
-
-    #region getters and Setters
-    public float AttackSpeed
-    {
-        get => (1 / (attackSpeed / 100));
-        set
-        {
-            if (value > 200)
-            {
-                attackSpeed = 200;
-            }
-            else if (value < 25)
-            {
-                attackSpeed = 25;
-            }
-            else
-            {
-                attackSpeed = value;
-            }
-
-        }
-    }
-    public float Defense
-    {
-        get => ((DefenseSkill.CurrentLevel / 100) * defense) + defense;
-        set
-        {
-            defense += value;
-            if (defense < 10)
-            {
-                defense = 10;
-            }
-        }
-    }
     public float Damage
     {
         get
@@ -97,19 +58,62 @@ public class PlayerStats : MonoBehaviour
             }
         }
     }
+    public float Defense
+    {
+        get => ((DefenseSkill.CurrentLevel / 100) * defense) + defense;
+        set
+        {
+            defense += value;
+            if (defense < 0)
+            {
+                defense = 0;
+            }
+        }
+    }
     public float Resistence
     {
         get => resistence;
         set
         {
             resistence += value;
-            if (resistence < 10)
+            if (resistence < 0)
             {
-                resistence = 10;
+                resistence = 0;
             }
         }
     }
+    public float MoveSpeed
+    {
+        get => moveSpeed;
+        set
+        {
+            moveSpeed += value;
+            if (moveSpeed < 1)
+            {
+                moveSpeed = 1;
+            }
+        }
+    }
+    public float AttackSpeed
+    {
+        get => (1 / (attackSpeed / 100));
+        set
+        {
+            if (value > 200)
+            {
+                attackSpeed = 200;
+            }
+            else if (value < 25)
+            {
+                attackSpeed = 25;
+            }
+            else
+            {
+                attackSpeed = value;
+            }
 
+        }
+    }
     public float Range
     {
         get => range;
@@ -129,59 +133,73 @@ public class PlayerStats : MonoBehaviour
             }
         }
     }
-    public float MoveSpeed
-    {
-        get => moveSpeed;
-        set
-        {
-            moveSpeed += value;
-            if (moveSpeed < 1)
-            {
-                moveSpeed = 1;
-            }
-        }
-    }
-
-    public AttributesClass Life { get => life; set => life = value; }
-    public AttributesClass Mana { get => mana; set => mana = value; }
-    public LevelClass Level { get => level; set => level = value; }
     public SkillClass MeleeSkill { get => meleeSkill; set => meleeSkill = value; }
     public SkillClass DistanceSkill { get => distanceSkill; set => distanceSkill = value; }
     public SkillClass MagicSkill { get => magicSkill; set => magicSkill = value; }
     public SkillClass DefenseSkill { get => defenseSkill; set => defenseSkill = value; }
+    public AttributesClass Life { get => life; set => life = value; }
+    public AttributesClass Mana { get => mana; set => mana = value; }
     #endregion
+
 
     // Start is called before the first frame update
     void Start()
     {
-        player = this.gameObject;
-        playerMoviment = GetComponentInChildren<PlayerMoviment>();
-        
-        
+        MoveSpeed = 1;
+        Range = 1;
+        Damage = 1;
+        AttackSpeed = 1;
+        Defense = 0;
+        Resistence = 0;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Life.CurrentValue <= 0)
-        {
-            IsDead();
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Life.CurrentValue = -10;
-        }
-        Debug.Log(Life.CurrentValue);
-        
+
     }
-    public void IsDead()
+    public void TookDamage(SendDamage sendDamage)
     {
-        playerBody.SetActive(false);
-        canvasPlayer.SetActive(false);
-        Level.CurrentExp = ((Level.CurrentExp * 0.08f) * -1);
-        MeleeSkill.CurrentExp = ((MeleeSkill.CurrentExp * 0.08f) * -1);
-        DistanceSkill.CurrentExp = ((DistanceSkill.CurrentExp * 0.08f) * -1);
-        MagicSkill.CurrentExp = ((MagicSkill.CurrentExp * 0.08f) * -1);
-        DefenseSkill.CurrentExp = ((DefenseSkill.CurrentExp * 0.08f) * -1);
+
+        int damageEnemy = sendDamage.Damage;
+        DamageType t = sendDamage.DamageType;
+        int criticalChance = sendDamage.CriticalChance;
+        float damage = 0;
+        float defenseTemp = 0;
+        float defensed = 0;
+        int damageTaken = 0;
+        if (t == DamageType.magic)
+        {
+            damage = damageEnemy;
+            defenseTemp = Random.Range(Resistence * 0.1f, Resistence);
+
+        }
+        else if (t == DamageType.physical)
+        {
+
+            if (Critic.IsCritic(criticalChance))
+            {
+                damage = Random.Range(damageEnemy, damageEnemy * 2);
+                Debug.Log("Critico");
+            }
+            else
+            {
+                damage = Random.Range((damageEnemy * 0.1f), damageEnemy);
+            }
+
+            defenseTemp = Random.Range(Defense * 0.1f, Defense);
+        }
+
+        defensed = 1 - (defenseTemp / 500);
+        if (defensed < 0.1f) defensed = 0.1f;
+        damageTaken = Mathf.FloorToInt(damage * defensed);
+        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + Damage);
     }
+    public void Buff()
+    {
+        buffedManager.Buff(2, 100, BuffedType.Armor, this);
+    }
+
+
 }

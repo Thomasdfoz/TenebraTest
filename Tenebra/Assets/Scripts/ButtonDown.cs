@@ -9,7 +9,7 @@ public class ButtonDown : MonoBehaviour, IPointerUpHandler, IPointerDownHandler,
 {
     public GameObject arcoRanged;
     public Joystick joy;
-    public PlayerMoviment player;
+    public PlayerController playerController;
     public Image mira;
     public Transform[] limites;
     // Start is called before the first frame update
@@ -28,13 +28,12 @@ public class ButtonDown : MonoBehaviour, IPointerUpHandler, IPointerDownHandler,
         arcoRanged.SetActive(false);
         GetComponent<Button>().interactable = true;
         joy.gameObject.SetActive(false);
-        player.miraBolean = false;
         mira.gameObject.SetActive(false);
         mira.rectTransform.localPosition = new Vector3(0, 0, 0);
         joy.OnPointerUp(data);
-        if (player.selectedTarget)
+        if (playerController.SelectedTarget)
         {
-            player.AttackSelected();
+            playerController.AttackSelected();
         }
     }
     public void OnPointerDown(PointerEventData data)
@@ -42,8 +41,7 @@ public class ButtonDown : MonoBehaviour, IPointerUpHandler, IPointerDownHandler,
         
         GetComponent<Button>().interactable = false;
         joy.gameObject.SetActive(true);
-        player.miraBolean = true;
-        player.RangedSelectTarget();
+        playerController.RangedSelectTarget();
     }
 
     public void OnDrag(PointerEventData eventData)

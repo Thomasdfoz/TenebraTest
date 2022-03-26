@@ -5,11 +5,10 @@ using UnityEngine;
 public class BuffedManager : MonoBehaviour
 {
     private float valueTemp;
-    public PlayerStats playerStats;
-    public void Buff(float time, float value, BuffedType buffedType)
+    public void Buff(float time, float value, BuffedType buffedType, PlayerStats target)
     {
-        BuffedOrNerfed(value, buffedType);
-        object[] parms = new object[3] { time, value, buffedType};
+        BuffedOrNerfed(value, buffedType, target);
+        object[] parms = new object[4] { time, value, buffedType, target };
         StartCoroutine("BuffedTime", parms);
     }
     private IEnumerator BuffedTime(object[] parms)
@@ -17,41 +16,42 @@ public class BuffedManager : MonoBehaviour
         float time = (float)parms[0];
         float value = (float)parms[1];
         BuffedType buffedType = (BuffedType)parms[2];
+        PlayerStats target = (PlayerStats)parms[3];
 
         yield return new WaitForSeconds(time);
 
-        BuffedOrNerfed((value * -1), buffedType);
+        BuffedOrNerfed((value * -1), buffedType, target);
     }
-    private void BuffedOrNerfed(float value, BuffedType buffedType)
+    private void BuffedOrNerfed(float value, BuffedType buffedType, PlayerStats target)
     {
         switch (buffedType)
         {
             case BuffedType.Damage:
-                valueTemp = playerStats.Damage;
-                playerStats.Damage = value;
+                valueTemp = target.Damage;
+                target.Damage = value;
                 break;
             case BuffedType.AttackSpeed:
-                valueTemp = playerStats.AttackSpeed;
-                playerStats.AttackSpeed = value;
+                valueTemp = target.AttackSpeed;
+                target.AttackSpeed = value;
 
                 break;
             case BuffedType.Armor:
-                valueTemp = playerStats.Defense;
-                playerStats.Defense= value;
+                valueTemp = target.Defense;
+                target.Defense = value;
 
                 break;
             case BuffedType.Resistence:
-                valueTemp = playerStats.Resistence;
-                playerStats.Resistence = value;
+                valueTemp = target.Resistence;
+                target.Resistence = value;
 
                 break;
             case BuffedType.Life:
-                valueTemp = playerStats.Life.CurrentValue;
-                playerStats.Life.CurrentValue = Mathf.FloorToInt(value);
+                valueTemp = target.Life.CurrentValue;
+                target.Life.CurrentValue = Mathf.FloorToInt(value);
                 break;
             case BuffedType.MoveSpeed:
-                valueTemp = playerStats.MoveSpeed;
-                playerStats.MoveSpeed = value;
+                valueTemp = target.MoveSpeed;
+                target.MoveSpeed = value;
                 break;
             default:
                 break;
