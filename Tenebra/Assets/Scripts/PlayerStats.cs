@@ -151,7 +151,7 @@ public class PlayerStats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Range = 15;
+        Range = 1;
         MoveSpeed = 1;
         Damage = 1;
         AttackSpeed = 1;

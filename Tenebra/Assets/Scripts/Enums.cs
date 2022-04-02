@@ -8,7 +8,6 @@ public enum BuffedType
     Life,
     MoveSpeed
 }
-
 public enum DamageType
 {
     physical,

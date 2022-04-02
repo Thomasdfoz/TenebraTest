@@ -21,7 +21,7 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         joy = GetComponentInChildren<FixedJoystick>();
         joy.gameObject.SetActive(false);
-        posY = -1;
+        posY = 0;
         posX = 0;
         posZ = 0;
 
@@ -78,7 +78,7 @@ public class SkillButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         joy.OnPointerUp(data);
 
         isMoving = false;
-        posY = -1;
+        posY = 0;
         posX = 0;
         posZ = 0;
 

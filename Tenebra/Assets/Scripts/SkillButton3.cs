@@ -13,6 +13,7 @@ public enum SkillBtn
 }
 public class SkillButton3 : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerClickHandler, IDragHandler
 {
+    public GameController gameController;
     public GameObject player;
     public SkillBtn[] skillBtn;
     public GameObject magicAutoPrefab;
@@ -56,7 +57,7 @@ public class SkillButton3 : MonoBehaviour, IPointerUpHandler, IPointerDownHandle
     #region Auto Skill
     private void ButtonDownAutoSkill()
     {
-        player.GetComponent<PlayerMoviment>().SpecialAttack(300, DamageType.magic);
+        player.GetComponent<PlayerController>().CallSpecialAttack(300, DamageType.magic, WaeponType.melee, 0.33f, gameController.animSpecialAttack);
     }
     #endregion
     #region Area Skill

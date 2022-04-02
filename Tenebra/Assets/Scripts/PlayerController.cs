@@ -210,5 +210,42 @@ public class PlayerController : MonoBehaviour
             selectedTarget.SendMessage("TookDamage", sendDamage);
         }
     }
+    public void CallSpecialAttack(float damage, DamageType damageType, WaeponType waeponType, float timeAnim, AnimationClip anim)
+    {
+        string parms = damageType.ToString() + "/" + damage.ToString() + "/" + waeponType.ToString();
+        if (anim.events.Length <= 0)
+        {
+            AnimationEvent AnimEvent = new AnimationEvent();
+            AnimEvent.functionName = "SpecialAttackMelee";
+            AnimEvent.time = timeAnim;
+            AnimEvent.stringParameter = parms;
+            anim.AddEvent(AnimEvent);
+        }
+        else
+        {
+            anim.events[0].stringParameter = parms;
+        }
+        StopCoroutine("CoroutineAttack");
+        playerAnim.SetTrigger("specialAttack");
+    }
+    public void SpecialAttackMelee(DamageType damageType, float damage)
+    {
+        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damage), 100, damageType);
+        if (selectedTarget)
+        {
+            selectedTarget.SendMessage("TookDamage", sendDamage);
+        }
+        StartCoroutine("CoroutineAttack");
+    }
+    public void SpecialAttackDistance(DamageType damageType, float damage)
+    {
+        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damage), 100, damageType);
+        if (selectedTarget)
+        {
+            selectedTarget.SendMessage("TookDamage", sendDamage);
+        }
+        StartCoroutine("CoroutineAttack");
+    }
+    
     #endregion
 }

@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    // isso aki vai ficar dentro do scriptable da magia
+    public AnimationClip animSpecialAttack;
+
+
     [Header("Main")]
     public GameObject Player;
     PlayerController playerController;

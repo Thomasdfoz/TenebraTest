@@ -10,7 +10,7 @@ public class ButtonDown : MonoBehaviour, IPointerUpHandler, IPointerDownHandler,
     public GameObject arcoRanged;
     public Joystick joy;
     public PlayerController playerController;
-    public Image mira;
+    public RawImage mira;
     public Transform[] limites;
     // Start is called before the first frame update
     void Start()
