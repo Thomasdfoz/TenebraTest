@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         playerAnim = playerBody.GetComponent<Animator>();
         playerStats = GetComponent<PlayerStats>();
-        joystickMoviment = gameController.btnMoviment.GetComponent<FixedJoystick>();
+        joystickMoviment = gameController.buttonsActive.moviment.GetComponent<FixedJoystick>();
         circleRange.SetActive(false);
         readyAttack = true;
         attacking = false;

@@ -163,7 +163,6 @@ public class PlayerStats : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log(Life.CurrentValue);
     }
 
     #region ------------------------My Functions-------------------
