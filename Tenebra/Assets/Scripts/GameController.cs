@@ -9,9 +9,9 @@ public class GameController : MonoBehaviour
 
 
     [Header("Main")]
-    public GameObject Player;
-    PlayerController playerController;
-    PlayerStats playerStats;
+    public GameObject player;
+    public PlayerController playerController;
+    public PlayerStats playerStats;
     public ButtonsActive buttonsActive;
 
     public SkillsScriptable skill;
@@ -23,8 +23,8 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerStats = Player.GetComponent<PlayerStats>();
-        playerController = Player.GetComponent<PlayerController>();
+        playerStats = player.GetComponent<PlayerStats>();
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
     {
         if (playerStats.Life.CurrentValue <= 0)
         {
-            Player.gameObject.SetActive(false);
+            player.gameObject.SetActive(false);
             playerStats.IsDead = true;
             Debug.Log("morto");
         }

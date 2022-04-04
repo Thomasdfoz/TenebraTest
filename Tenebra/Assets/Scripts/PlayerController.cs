@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     #region ------------------------Variables-------------------
     [Header("GameController")]
     public GameController gameController;
-    
+
     [Header("Main")]
     public GameObject playerBody;
     public GameObject circleRange;
@@ -20,13 +20,16 @@ public class PlayerController : MonoBehaviour
     private bool isWalk;
     public CharacterController controller;
     private RaycastHit hit;
-    private bool attacking;
-    private bool readyAttack;
+    private bool isAttacking;
+    private bool isReadyAttack;
     private bool isLookTarget;
     private float attackSpeedAnim;
     #endregion
 
     public GameObject SelectedTarget { get => selectedTarget; set => selectedTarget = value; }
+    public bool IsAttacking { get => isAttacking; }
+    public bool IsLookTarget { get => isLookTarget; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,8 +37,8 @@ public class PlayerController : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         joystickMoviment = gameController.buttonsActive.moviment.GetComponent<FixedJoystick>();
         circleRange.SetActive(false);
-        readyAttack = true;
-        attacking = false;
+        isReadyAttack = true;
+        isAttacking = false;
         isLookTarget = false;
     }
 
@@ -44,12 +47,12 @@ public class PlayerController : MonoBehaviour
     {
         if (SelectedTarget == null)
         {
-            attacking = false;
+            isAttacking = false;
         }
-        if (attacking)
+        if (IsAttacking)
         {
             LookTarget(SelectedTarget.transform);
-            if (readyAttack && isLookTarget)
+            if (isReadyAttack && IsLookTarget)
             {
                 SetTrigger("attack");
                 StartCoroutine("CoroutineAttack");
@@ -103,20 +106,14 @@ public class PlayerController : MonoBehaviour
         if (SpeedH > SpeedV)
         {
             playerAnim.SetFloat("velocity", SpeedH);
-            if (SpeedH > 0.70f)
-            {
-                SpeedH = 1;
-            }
+            if (SpeedH > 0.70f) SpeedH = 1;
             moveSpeed = SpeedH * playerStats.MoveSpeed;
 
         }
         else
         {
             playerAnim.SetFloat("velocity", SpeedV);
-            if (SpeedV > 0.70f)
-            {
-                SpeedV = 1;
-            }
+            if (SpeedV > 0.70f) SpeedV = 1;
             moveSpeed = SpeedV * playerStats.MoveSpeed;
         }
 
@@ -127,7 +124,7 @@ public class PlayerController : MonoBehaviour
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.Euler(0, targetAngle, 0), Time.deltaTime * 7f);
             isWalk = true;
-            attacking = false;
+            isAttacking = false;
             isLookTarget = false;
             if (SelectedTarget != null)
             {
@@ -149,7 +146,7 @@ public class PlayerController : MonoBehaviour
         Vector3 targ = new Vector3(lookTarget.position.x, -0.5f, lookTarget.position.z);
         Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - playerBody.transform.position, 5f, 5f);
         playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 7f);
-        if (!isLookTarget)
+        if (!IsLookTarget)
         {
             StartCoroutine("LookTargetTime", 0.3f);
         }
@@ -194,13 +191,13 @@ public class PlayerController : MonoBehaviour
         {
             SelectedTarget.GetComponent<Outline>().OutlineWidth = 2;
         }
-        attacking = true;
+        isAttacking = true;
     }
     private IEnumerator CoroutineAttack()
     {
-        readyAttack = false;
+        isReadyAttack = false;
         yield return new WaitForSeconds(playerStats.AttackSpeed);
-        readyAttack = true;
+        isReadyAttack = true;
     }
     public void AutoAttackMelee()
     {
@@ -246,6 +243,6 @@ public class PlayerController : MonoBehaviour
         }
         StartCoroutine("CoroutineAttack");
     }
-    
+
     #endregion
 }

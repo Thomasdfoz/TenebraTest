@@ -125,9 +125,9 @@ public class PlayerStats : MonoBehaviour
             {
                 range = 8;
             }
-            else if (value < 1.5f)
+            else if (value < 1f)
             {
-                range = 1.5f;
+                range = 1f;
             }
             else
             {

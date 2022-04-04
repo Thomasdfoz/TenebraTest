@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21ec50b1de89b2145bf625b6579f0087, type: 3}
-  m_Name: Magia de fogo
+  m_Name: Magia de area
   m_EditorClassIdentifier: 
   nome: Magia de fogo
+  skillType: 2
   costMana: 100
   costLife: 0
   damage: 100
+  timeDuration: 5
   prefabEffect: {fileID: 6826850931394117962, guid: 7db36173ab5aacb4fb0f6cd37ba25bb7,
     type: 3}
-  outline: {fileID: 21300000, guid: 5b56d9fa0e8bd6e409ed188db38a692c, type: 3}
+  imageEffect: {fileID: 21300000, guid: 5b56d9fa0e8bd6e409ed188db38a692c, type: 3}
+  width: 7
+  height: 7

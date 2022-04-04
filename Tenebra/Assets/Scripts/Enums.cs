@@ -8,6 +8,13 @@ public enum BuffedType
     Life,
     MoveSpeed
 }
+public enum SkillType
+{
+    Area,
+    Projectile,
+    AutoAttack,
+    AutoTarget
+}
 public enum DamageType
 {
     physical,
