@@ -239,7 +239,9 @@ namespace Cinemachine.Editor
 
         private static Vector2 sScrollPosition = Vector2.zero;
 
+#pragma warning disable CS0618 // O tipo ou membro é obsoleto
         [PreferenceItem("Cinemachine")]
+#pragma warning restore CS0618 // O tipo ou membro é obsoleto
         private static void OnGUI()
         {
             if (CinemachineHeader != null)

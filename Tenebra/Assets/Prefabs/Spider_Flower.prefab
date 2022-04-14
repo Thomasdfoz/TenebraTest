@@ -1042,7 +1042,7 @@ Transform:
   m_GameObject: {fileID: 7442129382293803218}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.15, y: -0.5, z: -0.83}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7445360728454375368}
@@ -1098,8 +1098,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 1
-  outlineColor: {r: 0, g: 0.50717497, b: 1, a: 1}
+  outlineMode: 3
+  outlineColor: {r: 0.25882354, g: 0.48235294, b: 0.5764706, a: 1}
   outlineWidth: 0
   precomputeOutline: 0
   bakeKeys: []
@@ -1138,11 +1138,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e501e48fdebbad94e903e2867a41f5ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 5000
+  materialHit: {fileID: 2100000, guid: eee664c2a3ca9ac4ba687fc20f6263ae, type: 2}
+  render: {fileID: 0}
+  life: 600
   damage: 100
   myArmor: 100
   myResistence: 100
   damageType: 0
+  body: {fileID: 7442034773741058490}
 --- !u!136 &1057239369
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1154,9 +1157,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 1.1986878
-  m_Height: 2.6708982
+  m_Height: 4
   m_Direction: 1
-  m_Center: {x: 0.013183057, y: 1.204568, z: 0}
+  m_Center: {x: 0.013183057, y: 1.9778711, z: 0}
 --- !u!1 &7442130612345701080
 GameObject:
   m_ObjectHideFlags: 0
