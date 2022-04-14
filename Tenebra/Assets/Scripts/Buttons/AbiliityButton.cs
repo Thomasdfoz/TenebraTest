@@ -32,7 +32,7 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
 
     private bool isAreaSkill;
     private bool isAutoAttackSkill;
-    private bool isAutoTargetSkill;
+    private bool isTargetSkill;
     private bool isProjectileSkill;
     private bool isHealSkill;
 
@@ -72,7 +72,6 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
         {
             autoAttackSkill.UpClick();
         }
-
         joy.OnPointerUp(data);
         AllBooleanFalse();
     }
@@ -96,15 +95,15 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
                 autoAttackSkill = (AutoAttackSkill_Scriptable)gameController.skill;
                 autoAttackSkill.DownClick(this.gameObject, joy, gameController, cicleRanged, mira);
                 break;
-            case SkillType.AutoTarget:
-                isAutoTargetSkill = true;
+            case SkillType.Target:
+                isTargetSkill = true;
                 autoTargetSkill = gameController.skill;
                 //autoTargetSkill.DownClick();
                 break;
             case SkillType.Heal:
                 isHealSkill = true;
                 healSkill = (HealSkill_Scriptable)gameController.skill;
-                //healSkill.DownClick();
+                healSkill.DownClick(gameController);
                 break;
             default:
                 break;
@@ -119,8 +118,6 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
             if (isAreaSkill)
             {
                 areaEffect.gameObject.SetActive(true);
-                Debug.Log("entrou aki2");
-
             }
             else if (isProjectileSkill)
             {
@@ -136,22 +133,8 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     {
         isAreaSkill = false;
         isAutoAttackSkill = false;
-        isAutoTargetSkill = false;
+        isTargetSkill = false;
         isHealSkill = false;
         isProjectileSkill = false;
-
-    }
-    private void HealSkill()
-    {
-        //skillPrefab = healSkillObject.prefabEffect;
-        //GameObject effect = Instantiate(skillPrefab, gameController.player.transform);
-        if (healSkill.healValue > 0)
-        {
-            //tenho que fazaer alguma funcao dentro dos skill pra calcular esse valor para bufar as magias
-            //fazer igual o burning damage para dar um burning heal tambem
-            Debug.Log("Lembrete no abiliityButton");
-            float valueTemp = healSkill.healValue * gameController.PlayerStats.MagicSkill.CurrentLevel;
-            gameController.PlayerStats.Life.Gain(healSkill.healValue);
-        }
     }
 }

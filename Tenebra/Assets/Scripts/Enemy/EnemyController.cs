@@ -89,7 +89,7 @@ public class EnemyController : MonoBehaviour
         damageTaken = Mathf.FloorToInt(damage * defensed);
         StartCoroutine("HitMaterialChange");
         Life = (damageTaken * -1);
-        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damage + " defesa ," + defenseTemp );
+        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damage + " defesa ," + defenseTemp.ToString("F0") + ", Tipo de dano: " + t);
 
     }
     private IEnumerator HitMaterialChange()

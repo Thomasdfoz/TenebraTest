@@ -12,6 +12,7 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
     public DamageType damageType;
     public WaeponType waeponType;
     public float TimeAnimation;
+    public float TimeAnimationDamage;
 
 
     private bool isLook = false;
@@ -36,9 +37,16 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
         //essa animaçao vai estar dentro do scriptable tambem "animSpecialAttack"
         if (gameController.PlayerController.SelectedTarget)
         {
-            gameController.PlayerController.ReadySpecialAttack();
-            gameController.PlayerController.AttackSelected();
-            Attack();
+            if (gameController.PlayerController.IsAnimationEnd)
+            {
+                gameController.PlayerController.ReadySpecialAttack();
+                gameController.PlayerController.AttackSelected();
+                Attack();
+            }
+            else
+            {
+                Debug.Log("Não pode attacar 2x ao mesmo tempo");
+            }
         }
         else
         {
@@ -60,15 +68,21 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
         {
             AnimationEvent AnimEvent = new AnimationEvent();
             AnimEvent.functionName = "AutoAttackSkill";
-            AnimEvent.time = TimeAnimation;
+            AnimEvent.time = TimeAnimationDamage;
             AnimEvent.stringParameter = parms;
             animationClip.AddEvent(AnimEvent);
+
+            AnimationEvent AnimEvent2 = new AnimationEvent();
+            AnimEvent2.functionName = "AnimationEnd";
+            AnimEvent2.time = TimeAnimation;
+            animationClip.AddEvent(AnimEvent2);
         }
         else
         {
             animationClip.events[0].stringParameter = parms;
         }
         gameController.PlayerController.SetTrigger(triggerName, 0.3f);
+        gameController.PlayerController.IsAnimationEnd = false;
     }
 
 }

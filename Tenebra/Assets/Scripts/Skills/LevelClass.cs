@@ -8,7 +8,7 @@ public class LevelClass : GenericSkillClass
         nextExpLevel = Formula(currentLevel);
     }
     //Formula dos Leveis
-    public override long Formula(long level)
+    public override long Formula(int level)
     {
         if (level <= 1)
             return 50;

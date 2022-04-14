@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //fazer igual o burning damage para dar um burning heal tambem nas potion e magias desse jeito
         if (PlayerStats.Life.CurrentValue <= 0)
         {
             player.gameObject.SetActive(false);

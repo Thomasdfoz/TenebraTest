@@ -9,7 +9,7 @@ public class SkillClass : GenericSkillClass
     }
 
     //Formula dos Skills
-    public override long Formula(long level)
+    public override long Formula(int level)
     {
         if (level < 10)
             return 10;

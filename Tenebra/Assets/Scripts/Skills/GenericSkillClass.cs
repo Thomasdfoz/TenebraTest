@@ -1,10 +1,10 @@
 public abstract class GenericSkillClass : IGenericSkillClass
 {
-    protected long currentLevel;
+    protected int currentLevel;
     private long currentExp;
     protected long previousExpLevel;
     protected long nextExpLevel;
-    public long CurrentLevel
+    public int CurrentLevel
     {
         get => currentLevel;
         
@@ -51,8 +51,8 @@ public abstract class GenericSkillClass : IGenericSkillClass
             levelDown(currentLevel);
         }
     }
-    public abstract long Formula(long level);
-    public void SetExp(long level)
+    public abstract long Formula(int level);
+    public void SetExp(int level)
     {
         nextExpLevel = Formula(level);
         previousExpLevel = Formula(level - 1);

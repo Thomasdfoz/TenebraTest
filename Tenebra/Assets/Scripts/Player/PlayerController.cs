@@ -22,13 +22,15 @@ public class PlayerController : MonoBehaviour
     private RaycastHit hit;
     private bool isAttacking;
     private bool isReadyAttack;
+    private bool isAnimationEnd;
     private bool isLookTarget;
     private float attackSpeedAnim;
     #endregion
 
     public GameObject SelectedTarget { get => selectedTarget; set => selectedTarget = value; }
-    public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
+    public bool IsAttacking { get => isAttacking; }
     public bool IsLookTarget { get => isLookTarget; }
+    public bool IsAnimationEnd { get => isAnimationEnd; set => isAnimationEnd = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +39,7 @@ public class PlayerController : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         joystickMoviment = gameController.ButtonsActive.moviment.GetComponent<FixedJoystick>();
         circleRange.SetActive(false);
+        IsAnimationEnd = true;
         isReadyAttack = true;
         isAttacking = false;
         isLookTarget = false;
@@ -54,6 +57,7 @@ public class PlayerController : MonoBehaviour
             LookTarget(SelectedTarget.transform);
             if (isReadyAttack && IsLookTarget)
             {
+                IsAnimationEnd = false;
                 SetTrigger("attack");
                 StopCoroutine("CoroutineAttack");
                 StartCoroutine("CoroutineAttack");
@@ -81,6 +85,10 @@ public class PlayerController : MonoBehaviour
     {
         string temp = trigger + "/" + time.ToString();
         StartCoroutine("SetTriggerDelay", temp);
+    }
+    public void AnimationEnd()
+    {
+        IsAnimationEnd = true;
     }
     IEnumerator SetTriggerDelay(string temp)
     {
@@ -248,18 +256,17 @@ public class PlayerController : MonoBehaviour
     }
     public void SpecialAttackMelee(DamageType damageType, float damage)
     {
-        float damageFinal;
+        int damageFinal = 0;
         if (damageType == DamageType.magic)
         {
-            damage += ((playerStats.MagicSkill.CurrentLevel / 3) / 100) * damage;
+            damageFinal = SkillCalculator.Calcule(damage, playerStats.MagicSkill.CurrentLevel);
         }
         else if (damageType == DamageType.physical)
         {
-            damage += (playerStats.Damage / 400) * damage;
+            damageFinal = SkillCalculator.Calcule(damage, Mathf.FloorToInt(playerStats.Damage));
         }
 
-        damageFinal = damage;
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damageFinal), false, damageType);
+        SendDamage sendDamage = new SendDamage(damageFinal, false, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);

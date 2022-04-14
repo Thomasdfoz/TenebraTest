@@ -1,14 +1,14 @@
 
 public interface IGenericSkillClass 
 {
-    long CurrentLevel { get; }
+    int CurrentLevel { get; }
     long CurrentExp { get; set; }
     long PreviousExpLevel { get;}
     long NextExpLevel { get; }
 
-    public long Formula(long level);
+    public long Formula(int level);
     public void levelDown(long curtExp);
     public void levelUp(long curtExp);
-    public void SetExp(long level);
+    public void SetExp(int level);
 
 }

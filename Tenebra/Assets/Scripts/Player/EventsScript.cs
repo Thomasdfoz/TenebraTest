@@ -9,6 +9,10 @@ public class EventsScript : MonoBehaviour
     {
         playerController.AutoAttackMelee();
     }
+    private void AnimationEnd()
+    {
+        playerController.AnimationEnd();
+    }
     private void AutoAttackDistance()
     {
         playerController.AutoAttackMelee();

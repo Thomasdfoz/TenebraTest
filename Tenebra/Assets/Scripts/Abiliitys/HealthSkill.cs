@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealtSkill : MonoBehaviour
+public class HealthSkill : MonoBehaviour
 {
 
     public float time;

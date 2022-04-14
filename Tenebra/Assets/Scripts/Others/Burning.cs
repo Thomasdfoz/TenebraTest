@@ -9,7 +9,7 @@ public class Burning : MonoBehaviour
     public string source;
     public float timeBurning;
     public float time;
-    public float damage;
+    public int damage;
     public DamageType damageType;
     public bool isReady;
 
@@ -36,14 +36,14 @@ public class Burning : MonoBehaviour
             StartCoroutine("IsBurningReady");
         }
     }
-    public void Constructor(float damage, float timeBurning, DamageType damageType, string source)
+    public void Constructor(int damage, float timeBurning, DamageType damageType, string source)
     {
         this.damage = damage;
         this.timeBurning = timeBurning;
         this.damageType = damageType;
         this.source = source;
     }
-    public void ResetTime(float damage)
+    public void ResetTime(int damage)
     {
         time = 0;
         this.damage = damage;
@@ -57,7 +57,7 @@ public class Burning : MonoBehaviour
     } 
     private void BurningDamage()
     {
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damage), false, damageType);
+        SendDamage sendDamage = new SendDamage(damage, false, damageType);
         this.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
     }
 

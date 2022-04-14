@@ -24,13 +24,19 @@ public class AttributesClass
     }
     public void Gain(float value)
     {
-        int valueINT= Mathf.FloorToInt(value); 
-        currentValue += valueINT;
-        if (currentValue > maxValue) currentValue = MaxValue;
+        if (value > 0)
+        {
+            int valueINT = Mathf.FloorToInt(value);
+            currentValue += valueINT;
+            if (currentValue > maxValue) currentValue = MaxValue;
+        }
     }
     public void Loses(int value)
     {
-        currentValue -= value;
-        if (currentValue < 0) currentValue = 0;
+        if (value > 0)
+        {
+            currentValue -= value;
+            if (currentValue < 0) currentValue = 0;
+        }
     }
 }

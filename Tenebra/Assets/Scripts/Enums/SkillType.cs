@@ -3,6 +3,6 @@ public enum SkillType
     Area,
     Projectile,
     AutoAttack,
-    AutoTarget,
+    Target,
     Heal
 }

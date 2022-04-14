@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class BurningManager
 {
-    public static void InvokeBurning(GameObject target, string nameBurning, float damage, float timeBurning, DamageType damageType)
+    public static void InvokeBurning(GameObject target, string nameBurning, int damage, float timeBurning, DamageType damageType)
     {
         Burning[] arrays = target.GetComponents<Burning>();
         if (arrays.Length > 0)
