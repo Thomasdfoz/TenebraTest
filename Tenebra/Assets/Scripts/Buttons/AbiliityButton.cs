@@ -9,6 +9,7 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
 {
     [Header("Main")]
     public GameController gameController;
+    public int buttonNumber;
     [Header("Effects")]
     public Image areaEffect;
     public Image projectileEffect;
@@ -24,11 +25,7 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
 
     #region privates
     //skills types
-    private AreaSkills_Scriptable areaSkill;
-    private ProjectileSkill_Scriptable projectileSkill;
-    private AutoAttackSkill_Scriptable autoAttackSkill;
-    private Skills_Scriptable autoTargetSkill;
-    private HealSkill_Scriptable healSkill;
+    Skills_Scriptable skills_Scriptable;
 
     private bool isAreaSkill;
     private bool isAutoAttackSkill;
@@ -48,29 +45,31 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     // Update is called once per frame
     void FixedUpdate()
     {
+
         if (isAreaSkill)
         {
-            areaSkill.MoveAreaSkill(limites, areaEffect, gameController);
+            skills_Scriptable.MoveAreaSkill(limites, areaEffect, gameController);
         }
         else if (isProjectileSkill)
         {
-            projectileSkill.ProjectileRotation(projectileEffect, spanwPoint.transform);
+            skills_Scriptable.ProjectileRotation(projectileEffect, spanwPoint.transform);
 
         }
     }
     public void OnPointerUp(PointerEventData data)
     {
+
         if (isAreaSkill)
         {
-            areaSkill.UpClick(areaEffect, this.gameObject);
+            skills_Scriptable.UpClick(areaEffect, this.gameObject);
         }
         else if (isProjectileSkill)
         {
-            projectileSkill.UpClick(projectileEffect, this.gameObject, spanwPoint.transform);
+            skills_Scriptable.UpClick(projectileEffect, this.gameObject, spanwPoint.transform);
         }
         else if (isAutoAttackSkill)
         {
-            autoAttackSkill.UpClick();
+            skills_Scriptable.UpClick();
         }
         joy.OnPointerUp(data);
         AllBooleanFalse();
@@ -78,32 +77,29 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     public void OnPointerDown(PointerEventData data)
     {
         AllBooleanFalse();
-        switch (gameController.skill.skillType)
+        skills_Scriptable = gameController.skill[buttonNumber];
+        switch (skills_Scriptable.skillType)
         {
             case SkillType.Area:
                 isAreaSkill = true;
-                areaSkill = (AreaSkills_Scriptable)gameController.skill;
-                areaSkill.DownClick(areaEffect, this.gameObject, joy);
+                skills_Scriptable.DownClick(areaEffect, this.gameObject, joy);
                 break;
             case SkillType.Projectile:
                 isProjectileSkill = true;
-                projectileSkill = (ProjectileSkill_Scriptable)gameController.skill;
-                projectileSkill.DownClick(projectileEffect, this.gameObject, joy);
+                skills_Scriptable.DownClick(projectileEffect, this.gameObject, joy);
                 break;
             case SkillType.AutoAttack:
                 isAutoAttackSkill = true;
-                autoAttackSkill = (AutoAttackSkill_Scriptable)gameController.skill;
-                autoAttackSkill.DownClick(this.gameObject, joy, gameController, cicleRanged, mira);
+                skills_Scriptable.DownClick(this.gameObject, joy, gameController, cicleRanged, mira);
                 break;
             case SkillType.Target:
                 isTargetSkill = true;
-                autoTargetSkill = gameController.skill;
+                //autoTargetSkill = gameController.skill;
                 //autoTargetSkill.DownClick();
                 break;
             case SkillType.Heal:
                 isHealSkill = true;
-                healSkill = (HealSkill_Scriptable)gameController.skill;
-                healSkill.DownClick(gameController);
+                skills_Scriptable.DownClick(gameController);
                 break;
             default:
                 break;

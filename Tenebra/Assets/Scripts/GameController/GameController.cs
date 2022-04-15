@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     private PlayerStats playerStats;
     private ButtonsActive buttonsActive;
 
-    public Skills_Scriptable skill;
+    public Skills_Scriptable[] skill;
 
     public PlayerController PlayerController { get => playerController; set => playerController = value; }
     public PlayerStats PlayerStats { get => playerStats; set => playerStats = value; }

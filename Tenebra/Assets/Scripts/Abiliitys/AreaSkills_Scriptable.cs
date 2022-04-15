@@ -24,7 +24,7 @@ public class AreaSkills_Scriptable : Skills_Scriptable
     private bool isMoving;
 
 
-    public void DownClick(Image areaEffect, GameObject obj, Joystick jo)
+    public override void DownClick(Image areaEffect, GameObject obj, Joystick jo)
     {
         posY = 0;
         posX = 0;
@@ -37,7 +37,7 @@ public class AreaSkills_Scriptable : Skills_Scriptable
         isMoving = true;
         Debug.Log("deu");
     }
-    public void UpClick(Image areaEffect, GameObject obj)
+    public override void UpClick(Image areaEffect, GameObject obj)
     {
         areaEffect.gameObject.SetActive(false);
         obj.GetComponent<Image>().enabled = true;
@@ -51,7 +51,7 @@ public class AreaSkills_Scriptable : Skills_Scriptable
         posZ = 0;
         Debug.Log("deu2");
     }
-    public void MoveAreaSkill(RectTransform[] limites, Image areaEffect, GameController gameController)
+    public override void MoveAreaSkill(RectTransform[] limites, Image areaEffect, GameController gameController)
     {
         if (isMoving)
         {

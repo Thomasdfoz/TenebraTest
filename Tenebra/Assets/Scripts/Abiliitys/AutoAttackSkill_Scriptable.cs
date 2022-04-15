@@ -22,7 +22,7 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
     private RawImage mira;
     Joystick joy;
 
-    public void DownClick(GameObject obj, Joystick joy, GameController gameController, GameObject cicleRanged, RawImage mira)
+    public override void DownClick(GameObject obj, Joystick joy, GameController gameController, GameObject cicleRanged, RawImage mira)
     {
         this.gameController = gameController;
         this.obj = obj;
@@ -53,7 +53,7 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
             Debug.Log("Nenhum Alvo Selecionado");
         }
     }
-    public void UpClick()
+    public override void UpClick()
     {
         cicleRanged.SetActive(false);
         obj.GetComponent<Image>().enabled = true;
@@ -61,7 +61,7 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
         mira.gameObject.SetActive(false);
         mira.rectTransform.localPosition = new Vector3(0, 0, 0);
     }
-    public void Attack()
+    private void Attack()
     {
         string parms = damageType.ToString() + "/" + damage.ToString() + "/" + waeponType.ToString();
         if (animationClip.events.Length <= 0)

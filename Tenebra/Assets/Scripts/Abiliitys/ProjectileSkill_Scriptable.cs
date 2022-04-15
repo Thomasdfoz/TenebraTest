@@ -20,7 +20,7 @@ public class ProjectileSkill_Scriptable : Skills_Scriptable
 
     private Joystick joy;
 
-    public void DownClick(Image projectileEffect, GameObject obj, Joystick jo)
+    public override void DownClick(Image projectileEffect, GameObject obj, Joystick jo)
     {
         joy = jo;
         projectileEffect.sprite = imageEffect;
@@ -28,7 +28,7 @@ public class ProjectileSkill_Scriptable : Skills_Scriptable
         obj.GetComponent<Image>().enabled = false;
         joy.gameObject.SetActive(true);
     }
-    public void ProjectileRotation(Image projectileEffect, Transform spanwPoint)
+    public override void ProjectileRotation(Image projectileEffect, Transform spanwPoint)
     {
         Vector3 direction = new Vector3(joy.Horizontal, 0f, joy.Vertical).normalized;
         if (direction.magnitude > 0.1f)
@@ -39,7 +39,7 @@ public class ProjectileSkill_Scriptable : Skills_Scriptable
             spanwPoint.rotation = Quaternion.Euler(0, targetAngle, 0);
         }
     }
-    public void  UpClick(Image projectileEffect, GameObject obj, Transform spanwPoint)
+    public override void UpClick(Image projectileEffect, GameObject obj, Transform spanwPoint)
     {
         projectileEffect.gameObject.SetActive(false);
         obj.GetComponent<Image>().enabled = true;
