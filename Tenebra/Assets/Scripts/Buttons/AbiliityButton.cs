@@ -13,12 +13,14 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     [Header("Effects")]
     public Image areaEffect;
     public Image projectileEffect;
+    public Transform lookObj;
     public RawImage mira;
     [Header("GameObjs")]
     public GameObject spanwPoint;
     public GameObject cicleRanged;
     [Header("Limites")]
     public RectTransform[] limites;
+    public Joystick joy;
 
 
 
@@ -33,104 +35,75 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     private bool isProjectileSkill;
     private bool isHealSkill;
 
-    private Joystick joy;
+    public Joystick Joy { get => joy; set => joy = value; }
+    public bool IsAreaSkill { get => isAreaSkill; set => isAreaSkill = value; }
+    public bool IsAutoAttackSkill { get => isAutoAttackSkill; set => isAutoAttackSkill = value; }
+    public bool IsTargetSkill { get => isTargetSkill; set => isTargetSkill = value; }
+    public bool IsProjectileSkill { get => isProjectileSkill; set => isProjectileSkill = value; }
+    public bool IsHealSkill { get => isHealSkill; set => isHealSkill = value; }
+
     #endregion
     // Start is called before the first frame update
     void Start()
     {
-        joy = GetComponentInChildren<FixedJoystick>();
-        joy.gameObject.SetActive(false);
+        Joy = GetComponentInChildren<FixedJoystick>();
+        Joy.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
-        if (isAreaSkill)
+        if (IsAreaSkill)
         {
-            skills_Scriptable.MoveAreaSkill(limites, areaEffect, gameController);
+            skills_Scriptable.MoveAreaSkill(this);
         }
-        else if (isProjectileSkill)
+        else if (IsProjectileSkill)
         {
-            skills_Scriptable.ProjectileRotation(projectileEffect, spanwPoint.transform);
-
+            skills_Scriptable.ProjectileRotation(this);
         }
+
     }
     public void OnPointerUp(PointerEventData data)
     {
-
-        if (isAreaSkill)
-        {
-            skills_Scriptable.UpClick(areaEffect, this.gameObject);
-        }
-        else if (isProjectileSkill)
-        {
-            skills_Scriptable.UpClick(projectileEffect, this.gameObject, spanwPoint.transform);
-        }
-        else if (isAutoAttackSkill)
-        {
-            skills_Scriptable.UpClick();
-        }
-        joy.OnPointerUp(data);
+        skills_Scriptable.UpClick(this);
+        Joy.OnPointerUp(data);
         AllBooleanFalse();
     }
     public void OnPointerDown(PointerEventData data)
     {
         AllBooleanFalse();
         skills_Scriptable = gameController.skill[buttonNumber];
-        switch (skills_Scriptable.skillType)
-        {
-            case SkillType.Area:
-                isAreaSkill = true;
-                skills_Scriptable.DownClick(areaEffect, this.gameObject, joy);
-                break;
-            case SkillType.Projectile:
-                isProjectileSkill = true;
-                skills_Scriptable.DownClick(projectileEffect, this.gameObject, joy);
-                break;
-            case SkillType.AutoAttack:
-                isAutoAttackSkill = true;
-                skills_Scriptable.DownClick(this.gameObject, joy, gameController, cicleRanged, mira);
-                break;
-            case SkillType.Target:
-                isTargetSkill = true;
-                //autoTargetSkill = gameController.skill;
-                //autoTargetSkill.DownClick();
-                break;
-            case SkillType.Heal:
-                isHealSkill = true;
-                skills_Scriptable.DownClick(gameController);
-                break;
-            default:
-                break;
-        }
+        skills_Scriptable.DownClick(this);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        joy.OnDrag(eventData);
-        if (joy.Vertical > 0.3f || joy.Horizontal > 0.3f || joy.Vertical < -0.3f || joy.Horizontal < -0.3f)
+        if (joy.gameObject.activeInHierarchy)
         {
-            if (isAreaSkill)
+            Joy.OnDrag(eventData);
+            if (Joy.Vertical > 0.3f || Joy.Horizontal > 0.3f || Joy.Vertical < -0.3f || Joy.Horizontal < -0.3f)
             {
-                areaEffect.gameObject.SetActive(true);
-            }
-            else if (isProjectileSkill)
-            {
-                projectileEffect.gameObject.SetActive(true);
-            }
-            else if (isAutoAttackSkill)
-            {
-                mira.gameObject.SetActive(true);
+                if (IsAreaSkill)
+                {
+                    areaEffect.gameObject.SetActive(true);
+                }
+                else if (IsProjectileSkill)
+                {
+                    projectileEffect.gameObject.SetActive(true);
+                }
+                else if (IsAutoAttackSkill)
+                {
+                    mira.gameObject.SetActive(true);
+                }
             }
         }
     }
     private void AllBooleanFalse()
     {
-        isAreaSkill = false;
-        isAutoAttackSkill = false;
-        isTargetSkill = false;
-        isHealSkill = false;
-        isProjectileSkill = false;
+        IsAreaSkill = false;
+        IsAutoAttackSkill = false;
+        IsTargetSkill = false;
+        IsHealSkill = false;
+        IsProjectileSkill = false;
     }
 }

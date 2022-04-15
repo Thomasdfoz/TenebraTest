@@ -17,10 +17,15 @@ MonoBehaviour:
   nameSkill: teste
   costMana: 100
   countdown: 0
+  damage: 100
   prefabEffect: {fileID: 6826850931394117962, guid: 7db36173ab5aacb4fb0f6cd37ba25bb7,
     type: 3}
   imageEffect: {fileID: 21300000, guid: 80d09a4e785514b4281d4baf7b3630e1, type: 3}
-  damage: 100
+  animationClip: {fileID: 7400000, guid: b317de3e072b8ea4e905181f437cee88, type: 3}
+  TimeAnimationCast: 0.3
+  TimeAnimation: 1
+  triggerName: castSkill
+  cast: {fileID: 6140239667881698734, guid: 9e289063153dfa94e9c9122661321604, type: 3}
   isBurning: 1
   damageBurning: 50
   timeDuration: 5

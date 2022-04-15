@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+
 public class PlayerController : MonoBehaviour
 {
     #region ------------------------Variables-------------------
@@ -25,6 +26,10 @@ public class PlayerController : MonoBehaviour
     private bool isAnimationEnd;
     private bool isLookTarget;
     private float attackSpeedAnim;
+
+    private Transform lookSkill;
+    private bool isLookTargetSkill = false;
+
     #endregion
 
     public GameObject SelectedTarget { get => selectedTarget; set => selectedTarget = value; }
@@ -63,6 +68,10 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine("CoroutineAttack");
             }
         }
+        if (isLookTargetSkill)
+        {
+            LookTarget(lookSkill);
+        }
         Move();
         Animations();
     }
@@ -97,86 +106,54 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(float.Parse(arg[1]));
         playerAnim.SetTrigger(arg[0]);
     }
-    private void Move()
-    {
-        float horizontal = joystickMoviment.Horizontal;
-        float vertical = joystickMoviment.Vertical;
-        float SpeedH = 0;
-        float SpeedV = 0;
-        float moveSpeed = 0;
-
-
-        if (horizontal < 0)
-        {
-            SpeedH = horizontal * -1;
-        }
-        else
-        {
-            SpeedH = horizontal;
-        }
-
-        if (vertical < 0)
-        {
-            SpeedV = vertical * -1;
-        }
-        else
-        {
-            SpeedV = vertical;
-        }
-
-        if (SpeedH > SpeedV)
-        {
-            playerAnim.SetFloat("velocity", SpeedH);
-            if (SpeedH > 0.70f) SpeedH = 1;
-            moveSpeed = SpeedH * playerStats.MoveSpeed;
-
-        }
-        else
-        {
-            playerAnim.SetFloat("velocity", SpeedV);
-            if (SpeedV > 0.70f) SpeedV = 1;
-            moveSpeed = SpeedV * playerStats.MoveSpeed;
-        }
-
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
-
-        if (direction.magnitude > 0.1f)
-        {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.Euler(0, targetAngle, 0), Time.deltaTime * 7f);
-            isWalk = true;
-            isAttacking = false;
-            isLookTarget = false;
-            if (SelectedTarget != null)
-            {
-                if (Vector3.Distance(transform.position, SelectedTarget.transform.position) > playerStats.Range)
-                {
-
-                    SelectedTarget.GetComponent<Outline>().OutlineWidth = 0;
-                }
-            }
-        }
-        else
-        {
-            isWalk = false;
-        }
-        controller.Move(direction * moveSpeed * Time.deltaTime);
-    }
     public void LookTarget(Transform lookTarget)
     {
-        Vector3 targ = new Vector3(lookTarget.position.x, -0.5f, lookTarget.position.z);
+        Vector3 targ = new(lookTarget.position.x, -0.5f, lookTarget.position.z);
         Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - playerBody.transform.position, 5f, 5f);
-        playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 7f);
-        if (!IsLookTarget)
+        playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 10f);
+        if (!IsLookTarget && IsAttacking)
         {
             StartCoroutine("LookTargetTime", 0.3f);
         }
+    }
+    /// <summary>
+    /// Olha para o alvo e depois de um tempo ele executa o trigger.
+    /// </summary>
+    /// <param name="target">Esse é o alvo para onde o player ira olhar</param>
+    /// <param name="timeLook"> Esse é o tempo que o jogador vai esperar antes de executar o trigger</param>
+    /// <param name="triggerName">Esse é o trigger da animacao que vai chamar la no Animator</param>    
+    public void SkillAnimation(Transform target, float timeLook, string triggerName)
+    {
+       
+        isLookTargetSkill = true;
+        lookSkill = target;
+        string p = (timeLook.ToString() + "/" + triggerName);
+        StartCoroutine("LookTargetTime", p);
+    }
+    /// <summary>
+    /// Nâo olha para o avo, espera um tempo e depois executa o trigger, 
+    /// </summary>
+    /// <param name="timeLook">Esse é o tempo que o jogador vai esperar antes de executar o trigger</param>
+    /// <param name="triggerName">Esse é o trigger da animacao que vai chamar la no Animator</param>
+    public void SkillAnimation(float timeLook, string triggerName)
+    {
+        string p = (timeLook.ToString() + "/" + triggerName);
+        StartCoroutine("LookTargetTime", p);
     }
     private IEnumerator LookTargetTime(float time)
     {
         isLookTarget = false;
         yield return new WaitForSeconds(time);
         isLookTarget = true;
+    }
+    private IEnumerator LookTargetTime(string p)
+    {
+        string[] parm = p.Split("/");
+        isLookTarget = false;
+        yield return new WaitForSeconds(float.Parse(parm[0]));
+        SetTrigger(parm[1], 0.1f);
+        isLookTarget = true;
+        isLookTargetSkill = false;
     }
     public void RangedSelectTarget()
     {
@@ -192,7 +169,7 @@ public class PlayerController : MonoBehaviour
         {
             if (SelectedTarget != null)
             {
-                if (tar.gameObject.name == SelectedTarget.gameObject.name)
+                if (tar.gameObject.name == SelectedTarget.name)
                 {
                     t = SelectedTarget;
                     return t;
@@ -248,7 +225,7 @@ public class PlayerController : MonoBehaviour
         {
             damage = Random.Range((playerStats.Damage * 0.1f), playerStats.Damage);
         }
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(playerStats.Damage), isCritical, playerStats.DamageType);
+        SendDamage sendDamage = new(Mathf.FloorToInt(damage), isCritical, playerStats.DamageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
@@ -266,21 +243,82 @@ public class PlayerController : MonoBehaviour
             damageFinal = SkillCalculator.Calcule(damage, Mathf.FloorToInt(playerStats.Damage));
         }
 
-        SendDamage sendDamage = new SendDamage(damageFinal, false, damageType);
+        SendDamage sendDamage = new(damageFinal, false, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
         }
     }
-
     public void SpecialAttackDistance(DamageType damageType, float damage)
     {
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damage + playerStats.Damage), false, damageType);
+        SendDamage sendDamage = new(Mathf.FloorToInt(damage + playerStats.Damage), false, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
         }
         StartCoroutine("CoroutineAttack");
+    }
+    private void Move()
+    {
+        float horizontal = joystickMoviment.Horizontal;
+        float vertical = joystickMoviment.Vertical;
+        float SpeedH;
+        if (horizontal < 0)
+        {
+            SpeedH = horizontal * -1;
+        }
+        else
+        {
+            SpeedH = horizontal;
+        }
+
+        float SpeedV;
+        if (vertical < 0)
+        {
+            SpeedV = vertical * -1;
+        }
+        else
+        {
+            SpeedV = vertical;
+        }
+        float moveSpeed;
+        if (SpeedH > SpeedV)
+        {
+            playerAnim.SetFloat("velocity", SpeedH);
+            if (SpeedH > 0.70f) SpeedH = 1;
+            moveSpeed = SpeedH * playerStats.MoveSpeed;
+
+        }
+        else
+        {
+            playerAnim.SetFloat("velocity", SpeedV);
+            if (SpeedV > 0.70f) SpeedV = 1;
+            moveSpeed = SpeedV * playerStats.MoveSpeed;
+        }
+
+        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+
+        if (direction.magnitude > 0.1f)
+        {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.Euler(0, targetAngle, 0), Time.deltaTime * 7f);
+            isWalk = true;
+            isAttacking = false;
+            isLookTarget = false;
+            if (SelectedTarget != null)
+            {
+                if (Vector3.Distance(transform.position, SelectedTarget.transform.position) > playerStats.Range)
+                {
+
+                    SelectedTarget.GetComponent<Outline>().OutlineWidth = 0;
+                }
+            }
+        }
+        else
+        {
+            isWalk = false;
+        }
+        controller.Move(direction * moveSpeed * Time.deltaTime);
     }
 
 

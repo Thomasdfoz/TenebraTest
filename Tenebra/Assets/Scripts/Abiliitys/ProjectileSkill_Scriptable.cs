@@ -6,45 +6,81 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "Create ProjectileSkill", menuName = "Skill/New Projectile Skill")]
 public class ProjectileSkill_Scriptable : Skills_Scriptable
 {
+    public int damage;
     public GameObject prefabEffect;
     public Sprite imageEffect;
+    public AnimationClip animationClip;
+    public float TimeAnimationCast;
+    public float TimeAnimation;
+    public string triggerName;
+    public GameObject cast;
     public bool isBurning;
     public ProjectileType projectileType;
-    public int damage;
     public int damageBurning;
     public int burningDuration;
     public int moveSpeed;
-    public int width;
-    public int height;
+    public float width;
+    public float height;
 
-
+    private bool isActive;
     private Joystick joy;
-
-    public override void DownClick(Image projectileEffect, GameObject obj, Joystick jo)
+    public override void DownClick(AbiliityButton abiliityButton)
     {
-        joy = jo;
-        projectileEffect.sprite = imageEffect;
-        projectileEffect.rectTransform.sizeDelta = new Vector2(width, height);
-        obj.GetComponent<Image>().enabled = false;
+        base.DownClick(abiliityButton);
+        joy = abiliityButton.Joy;
+        abiliityButton.projectileEffect.sprite = imageEffect;
+        abiliityButton.projectileEffect.rectTransform.sizeDelta = new Vector2(width, height);
+        abiliityButton.gameObject.GetComponent<Image>().enabled = false;
         joy.gameObject.SetActive(true);
+
     }
-    public override void ProjectileRotation(Image projectileEffect, Transform spanwPoint)
+    public override void ProjectileRotation(AbiliityButton abiliityButton)
     {
-        Vector3 direction = new Vector3(joy.Horizontal, 0f, joy.Vertical).normalized;
+        base.ProjectileRotation(abiliityButton);
+        Vector3 direction = new (joy.Horizontal, 0f, joy.Vertical);
         if (direction.magnitude > 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
-            projectileEffect.rectTransform.rotation = Quaternion.Euler(90, 0, targetAngle);
+            abiliityButton.projectileEffect.rectTransform.rotation = Quaternion.Euler(90, 0, targetAngle);
             targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            spanwPoint.rotation = Quaternion.Euler(0, targetAngle, 0);
+            abiliityButton.lookObj.rotation = Quaternion.Euler(0, targetAngle, 0);
+            isActive = true;
         }
     }
-    public override void UpClick(Image projectileEffect, GameObject obj, Transform spanwPoint)
+    public override void UpClick(AbiliityButton abiliityButton)
     {
-        projectileEffect.gameObject.SetActive(false);
-        obj.GetComponent<Image>().enabled = true;
+        base.UpClick(abiliityButton);
+        abiliityButton.projectileEffect.gameObject.SetActive(false);
+        abiliityButton.gameObject.GetComponent<Image>().enabled = true;
         joy.gameObject.SetActive(false);
-        GameObject missile = Instantiate(prefabEffect, spanwPoint.transform.position, spanwPoint.transform.rotation);
-        missile.GetComponent<Rigidbody>().velocity = (spanwPoint.transform.forward * moveSpeed);
+        if (isActive)
+        {
+            abiliityButton.gameController.PlayerController.SkillAnimation(abiliityButton.lookObj, 0.5f, triggerName);
+            Cast(abiliityButton);
+        }
+        isActive = false;
+    }
+    private void Cast(AbiliityButton abiliityButton)
+    {
+        Cast c = cast.GetComponent<Cast>();
+        c.Constructor(abiliityButton.spanwPoint.transform, prefabEffect, moveSpeed);
+        if (animationClip.events.Length <= 0)
+        {
+            AnimationEvent AnimEvent = new ();
+            AnimEvent.functionName = "CastSkill";
+            AnimEvent.time = TimeAnimationCast;
+            AnimEvent.objectReferenceParameter = c;
+            animationClip.AddEvent(AnimEvent);
+
+            AnimationEvent AnimEvent2 = new ();
+            AnimEvent2.functionName = "AnimationEnd";
+            AnimEvent2.time = TimeAnimation;
+            animationClip.AddEvent(AnimEvent2);
+        }
+        else
+        {
+            animationClip.events[0].objectReferenceParameter = c;
+        }
+        abiliityButton.gameController.PlayerController.IsAnimationEnd = false;
     }
 }

@@ -313,7 +313,7 @@ public class PlayerMoviment : MonoBehaviour
     }
     public void LookTarget()
     {
-        Vector3 targ = new Vector3(selectedTarget.transform.position.x, -0.5f, selectedTarget.transform.position.z);
+        Vector3 targ = new (selectedTarget.transform.position.x, -0.5f, selectedTarget.transform.position.z);
         Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - transform.position, 5f, 5f);
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 7f);
         if (!isLookTarget)
@@ -347,7 +347,7 @@ public class PlayerMoviment : MonoBehaviour
         {
             if (selectedTarget != null)
             {
-                if (tar.gameObject.name == selectedTarget.gameObject.name)
+                if (tar.gameObject.name == selectedTarget.name)
                 {
                     t = selectedTarget;
                     return t;
@@ -382,7 +382,7 @@ public class PlayerMoviment : MonoBehaviour
         string parms = damageType.ToString() + "/" + damage.ToString();
         if (animSpecialAttack.events.Length <= 0)
         {
-            AnimationEvent AnimEvent = new AnimationEvent();
+            AnimationEvent AnimEvent = new ();
             AnimEvent.functionName = "AutoAttackSpecial";
             AnimEvent.time = 0.33f;
             AnimEvent.stringParameter = parms;
@@ -411,7 +411,7 @@ public class PlayerMoviment : MonoBehaviour
             damageType = DamageType.magic;
         }
 
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(damage), true, damageType);
+        SendDamage sendDamage = new (Mathf.FloorToInt(damage), true, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
@@ -420,7 +420,7 @@ public class PlayerMoviment : MonoBehaviour
     }
     public void AutoAttackMelee()
     {
-        SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(MyDamage), chanceCritic, damageType);
+        SendDamage sendDamage = new (Mathf.FloorToInt(MyDamage), chanceCritic, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
@@ -431,9 +431,7 @@ public class PlayerMoviment : MonoBehaviour
     {
         float horizontal = joystick.Horizontal;
         float vertical = joystick.Vertical;
-        float SpeedH = 0;
-        float SpeedV = 0;
-
+        float SpeedH;
         if (horizontal < 0)
         {
             SpeedH = horizontal * -1;
@@ -443,6 +441,7 @@ public class PlayerMoviment : MonoBehaviour
             SpeedH = horizontal;
         }
 
+        float SpeedV;
         if (vertical < 0)
         {
             SpeedV = vertical * -1;
@@ -509,8 +508,6 @@ public class PlayerMoviment : MonoBehaviour
         bool criticalChance = sendDamage.IsCritical;
         float damage = 0;
         float defenseTemp = 0;
-        float defensed = 0;
-        int damageTaken = 0;
         if (t == DamageType.magic)
         {
             damage = damageEnemy;
@@ -528,9 +525,9 @@ public class PlayerMoviment : MonoBehaviour
             defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
         }
 
-        defensed = 1 - (defenseTemp / 500);
+        float defensed = 1 - defenseTemp / 500;
         if (defensed < 0.1f) defensed = 0.1f;
-        damageTaken = Mathf.FloorToInt(damage * defensed);
+        int damageTaken = Mathf.FloorToInt(damage * defensed);
         Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + MyDamage);
     }
     public bool IsCritic(int chance)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6140239667881698735}
   - component: {fileID: 6140239667881698733}
   - component: {fileID: 6140239667881698732}
+  - component: {fileID: 1539096633}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -70,6 +71,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animSpecialAttack: {fileID: 7400000, guid: af8a305bec60a0d4bb2f51a513fe1e33, type: 3}
-  Player: {fileID: 0}
-  buttonsActive: {fileID: 6140239667881698733}
-  skill: {fileID: 0}
+  color: {r: 0.49411765, g: 0.17254902, b: 0.17254902, a: 0.7058824}
+  player: {fileID: 0}
+  skill:
+  - {fileID: 11400000, guid: 765642d9f9ce35345b227e559ba83d68, type: 2}
+  - {fileID: 11400000, guid: 2683f0283233ec3429ce0ac71ecf2695, type: 2}
+  - {fileID: 11400000, guid: 560948acb9054e54bb0a493d26d06855, type: 2}
+  - {fileID: 11400000, guid: 4ef58b1b50b18e840912185307a9a925, type: 2}
+--- !u!114 &1539096633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6140239667881698734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecfc920b8cd6c73439e76eb1faaaecff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

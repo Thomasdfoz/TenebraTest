@@ -6,53 +6,68 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "Create AreaSkill", menuName = "Skill/New Area Skill")]
 public class AreaSkills_Scriptable : Skills_Scriptable
 {
+    public int damage;
     public GameObject prefabEffect;
     public Sprite imageEffect;
-    public int damage;
+    public AnimationClip animationClip;
+    public float TimeAnimationCast;
+    public float TimeAnimation;
+    public string triggerName;
+    public GameObject cast;
     public bool isBurning;
     public int damageBurning;
     public int timeDuration;
-    public int width;
-    public int height;
+    public float width;
+    public float height;
 
 
     private float posY;
     private float posX;
     private float posZ;
 
+    private bool isActive;
     private Joystick joy;
     private bool isMoving;
 
 
-    public override void DownClick(Image areaEffect, GameObject obj, Joystick jo)
+    public override void DownClick(AbiliityButton abiliityButton)
     {
+        base.DownClick(abiliityButton);
         posY = 0;
         posX = 0;
         posZ = 0;
-        joy = jo;
-        areaEffect.sprite = imageEffect;
-        areaEffect.rectTransform.sizeDelta = new Vector2(width, height);
-        obj.GetComponent<Image>().enabled = false;
+        joy = abiliityButton.Joy;
+        abiliityButton.areaEffect.sprite = imageEffect;
+        abiliityButton.areaEffect.rectTransform.sizeDelta = new Vector2(width, height);
+        abiliityButton.gameObject.GetComponent<Image>().enabled = false;
         joy.gameObject.SetActive(true);
         isMoving = true;
-        Debug.Log("deu");
     }
-    public override void UpClick(Image areaEffect, GameObject obj)
+    public override void UpClick(AbiliityButton abiliityButton)
     {
-        areaEffect.gameObject.SetActive(false);
-        obj.GetComponent<Image>().enabled = true;
+        base.UpClick(abiliityButton);
+        abiliityButton.areaEffect.gameObject.SetActive(false);
+        abiliityButton.gameObject.GetComponent<Image>().enabled = true;
         joy.gameObject.SetActive(false);
-        GameObject magic = Instantiate(prefabEffect);
-        Vector3 pos = new Vector3(areaEffect.rectTransform.position.x, prefabEffect.transform.position.y, areaEffect.rectTransform.position.z);
-        magic.transform.position = pos;
+        if (isActive)
+        {
+            abiliityButton.gameController.PlayerController.SkillAnimation(abiliityButton.areaEffect.transform, 0.5f, triggerName);
+        }
+        else
+        {
+            abiliityButton.gameController.PlayerController.SkillAnimation(0.5f, triggerName);
+        }
+        Cast(abiliityButton);
         isMoving = false;
+        isActive = false;
         posY = 0;
         posX = 0;
         posZ = 0;
-        Debug.Log("deu2");
     }
-    public override void MoveAreaSkill(RectTransform[] limites, Image areaEffect, GameController gameController)
+    public override void MoveAreaSkill(AbiliityButton abiliityButton)
     {
+        base.MoveAreaSkill(abiliityButton);
+        RectTransform[] limites = abiliityButton.limites;
         if (isMoving)
         {
             posX += (joy.Horizontal / 4);
@@ -75,11 +90,39 @@ public class AreaSkills_Scriptable : Skills_Scriptable
                 posZ = limites[0].anchoredPosition3D.z;
 
             }
-            areaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
+            abiliityButton.areaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
+            if (abiliityButton.areaEffect.rectTransform.anchoredPosition3D.magnitude > 0.1f)
+            {
+                isActive = true;
+            }
         }
-        Vector3 difference = areaEffect.transform.position - gameController.player.transform.position;
+        Vector3 difference = abiliityButton.areaEffect.transform.position - abiliityButton.gameController.player.transform.position;
         float rotationZ = Mathf.Atan2(difference.z, difference.x) * Mathf.Rad2Deg;
-        areaEffect.transform.rotation = Quaternion.Euler(90.0f, 0.0f, rotationZ - 90f);
+        abiliityButton.areaEffect.transform.rotation = Quaternion.Euler(90.0f, 0.0f, rotationZ - 90f);
+    }
+    private void Cast(AbiliityButton abiliityButton)
+    {
+        Cast c = cast.GetComponent<Cast>();
+        c.Constructor(abiliityButton.areaEffect.transform, prefabEffect, 0);
+        if (animationClip.events.Length <= 0)
+        {
+            AnimationEvent AnimEvent = new();
+            AnimEvent.functionName = "CastSkill";
+            AnimEvent.time = TimeAnimationCast;
+            AnimEvent.objectReferenceParameter = c;
+            animationClip.AddEvent(AnimEvent);
+
+            AnimationEvent AnimEvent2 = new();
+            AnimEvent2.functionName = "AnimationEnd";
+            AnimEvent2.time = TimeAnimation;
+            animationClip.AddEvent(AnimEvent2);
+        }
+        else
+        {
+            animationClip.events[0].objectReferenceParameter = c;
+        }
+        abiliityButton.gameController.PlayerController.IsAnimationEnd = false;
     }
 }
+
 

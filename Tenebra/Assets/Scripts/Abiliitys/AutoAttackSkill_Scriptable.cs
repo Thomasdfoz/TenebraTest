@@ -20,15 +20,16 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
     private GameObject cicleRanged;
     private GameObject obj;
     private RawImage mira;
+    private SendDamage damage2;
     Joystick joy;
-
-    public override void DownClick(GameObject obj, Joystick joy, GameController gameController, GameObject cicleRanged, RawImage mira)
+    public override void DownClick(AbiliityButton abiliityButton)
     {
-        this.gameController = gameController;
-        this.obj = obj;
-        this.cicleRanged = cicleRanged;
-        this.joy = joy;
-        this.mira = mira;
+        base.DownClick(abiliityButton);
+        this.gameController = abiliityButton.gameController;
+        this.obj = abiliityButton.gameObject;
+        this.cicleRanged = abiliityButton.cicleRanged;
+        this.joy = abiliityButton.Joy;
+        this.mira = abiliityButton.mira;
 
         this.obj.GetComponent<Image>().enabled = false;
         this.joy.gameObject.SetActive(true);
@@ -53,7 +54,8 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
             Debug.Log("Nenhum Alvo Selecionado");
         }
     }
-    public override void UpClick()
+   
+    public override void UpClick(AbiliityButton abiliityButton)
     {
         cicleRanged.SetActive(false);
         obj.GetComponent<Image>().enabled = true;
@@ -66,13 +68,13 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
         string parms = damageType.ToString() + "/" + damage.ToString() + "/" + waeponType.ToString();
         if (animationClip.events.Length <= 0)
         {
-            AnimationEvent AnimEvent = new AnimationEvent();
+            AnimationEvent AnimEvent = new ();
             AnimEvent.functionName = "AutoAttackSkill";
             AnimEvent.time = TimeAnimationDamage;
             AnimEvent.stringParameter = parms;
             animationClip.AddEvent(AnimEvent);
 
-            AnimationEvent AnimEvent2 = new AnimationEvent();
+            AnimationEvent AnimEvent2 = new ();
             AnimEvent2.functionName = "AnimationEnd";
             AnimEvent2.time = TimeAnimation;
             animationClip.AddEvent(AnimEvent2);

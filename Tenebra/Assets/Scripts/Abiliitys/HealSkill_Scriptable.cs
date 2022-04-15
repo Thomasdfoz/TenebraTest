@@ -8,10 +8,10 @@ public class HealSkill_Scriptable : Skills_Scriptable
 {
     public GameObject prefabEffect;
     public int healValue;
-    public override void DownClick(GameController gameController)
+    public override void DownClick(AbiliityButton abiliityButton)
     {
-        GameObject effect = Instantiate(prefabEffect, gameController.player.transform);
-        int valueTemp = SkillCalculator.Calcule(healValue, gameController.PlayerStats.MagicSkill.CurrentLevel);
-        gameController.PlayerStats.Life.Gain(valueTemp);
+        GameObject effect = Instantiate(prefabEffect, abiliityButton.gameController.player.transform);
+        int valueTemp = SkillCalculator.Calcule(healValue, abiliityButton.gameController.PlayerStats.MagicSkill.CurrentLevel);
+        abiliityButton.gameController.PlayerStats.Life.Gain(valueTemp);
     }
 }

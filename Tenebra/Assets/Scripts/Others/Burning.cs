@@ -57,7 +57,7 @@ public class Burning : MonoBehaviour
     } 
     private void BurningDamage()
     {
-        SendDamage sendDamage = new SendDamage(damage, false, damageType);
+        SendDamage sendDamage = new (damage, false, damageType);
         this.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
     }
 

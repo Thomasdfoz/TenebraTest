@@ -66,8 +66,6 @@ public class EnemyController : MonoBehaviour
         bool isCritical = sendDamage.IsCritical;
         float damage = 0;
         float defenseTemp = 0;
-        float defensed = 0;
-        int damageTaken = 0;
         if (t == DamageType.magic)
         {
             damage = damageEnemy;
@@ -84,9 +82,9 @@ public class EnemyController : MonoBehaviour
             defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
         }
 
-        defensed = 1 - (defenseTemp / 500);
+        float defensed = 1 - defenseTemp / 500;
         if (defensed < 0.1f) defensed = 0.1f;
-        damageTaken = Mathf.FloorToInt(damage * defensed);
+        int damageTaken = Mathf.FloorToInt(damage * defensed);
         StartCoroutine("HitMaterialChange");
         Life = (damageTaken * -1);
         Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damage + " defesa ," + defenseTemp.ToString("F0") + ", Tipo de dano: " + t);
