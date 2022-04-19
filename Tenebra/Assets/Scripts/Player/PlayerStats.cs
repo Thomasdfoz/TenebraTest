@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     #region ------------------------Main---------------------------
+    public CombatTextManager combatTextManager;
+    public Transform ExitText;
     public BuffedManager buffedManager;
     private WaeponType waeponType;
     private DamageType damageType;
@@ -157,6 +159,7 @@ public class PlayerStats : MonoBehaviour
         AttackSpeed = 1;
         Defense = 100;
         Resistence = 0;
+        chanceCritic = 100;
         
     }
 
@@ -165,8 +168,12 @@ public class PlayerStats : MonoBehaviour
     {
         Debug.Log("Life: " + life.CurrentValue);
     }
-
     #region ------------------------My Functions-------------------
+    public void Heal(int healValue)
+    {
+        Life.Gain(healValue);
+        combatTextManager.HealText(ExitText, healValue);
+    }
     public void TookDamage(SendDamage sendDamage)
     {
         if (!IsDead)
@@ -186,10 +193,7 @@ public class PlayerStats : MonoBehaviour
             }
             else if (t == DamageType.physical)
             {
-                if (isCritical)
-                {
-                    Debug.Log("Critico");
-                }
+                
                 defenseTemp = Random.Range(Defense * 0.1f, Defense);
             }
 
@@ -197,6 +201,15 @@ public class PlayerStats : MonoBehaviour
             if (defensed < 0.1f) defensed = 0.1f;
             damageTaken = Mathf.FloorToInt(damage * defensed);
             Life.Loses(damageTaken);
+            if (isCritical)
+            {
+                combatTextManager.MyCriticText(ExitText, damageTaken);
+            }
+            else
+            {
+                combatTextManager.MyAttackText(ExitText, damageTaken);
+
+            }
             Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + Damage);
         }
         

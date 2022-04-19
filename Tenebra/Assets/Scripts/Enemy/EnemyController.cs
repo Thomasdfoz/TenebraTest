@@ -5,9 +5,11 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
+    public CombatTextManager combatTextManager;
     [SerializeField] private Material materialHit;
     [SerializeField] SkinnedMeshRenderer render;
-    [SerializeField] private int life;
+    [SerializeField] private float maxLife;
+    private float currentLife;
     [SerializeField] private int damage;
     [SerializeField] private float myArmor;
     [SerializeField] private float myResistence;
@@ -27,17 +29,18 @@ public class EnemyController : MonoBehaviour
 
     public float MyArmor { get => myArmor; set => myArmor += value; }
     public float MyResistence { get => myResistence; set => myResistence += value; }
-    public int Life { 
-        get => life; 
-        set {
-            life += value;
-            if (life < 0)
-            {
-                life = 0;
-                dead = true;
-            }
-        } 
+    public float CurrentLife
+    {
+        get => currentLife;
+        set
+        {
+            currentLife += Mathf.FloorToInt(value);
+            if (currentLife > MaxLife) currentLife = MaxLife;
+            if (currentLife < 0) currentLife = 0;
+        }
     }
+
+    public float MaxLife { get => maxLife; set => maxLife = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -48,12 +51,13 @@ public class EnemyController : MonoBehaviour
         outline = GetComponent<Outline>();
         agent = GetComponent<NavMeshAgent>();
         mat = render.material;
-     }
+        CurrentLife = MaxLife;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (Life == 0)
+        if (currentLife == 0)
         {
             StartCoroutine("Dead");
         }
@@ -64,30 +68,31 @@ public class EnemyController : MonoBehaviour
         int damageEnemy = sendDamage.Damage;
         DamageType t = sendDamage.DamageType;
         bool isCritical = sendDamage.IsCritical;
-        float damage = 0;
         float defenseTemp = 0;
         if (t == DamageType.magic)
         {
-            damage = damageEnemy;
             defenseTemp = Random.Range(MyResistence * 0.1f, MyResistence);
-
         }
         else if (t == DamageType.physical)
         {
-            damage = damageEnemy;
-            if (isCritical)
-            {
-                Debug.Log("Critico");
-            }
             defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
         }
 
         float defensed = 1 - defenseTemp / 500;
         if (defensed < 0.1f) defensed = 0.1f;
-        int damageTaken = Mathf.FloorToInt(damage * defensed);
+        int damageTaken = Mathf.FloorToInt(damageEnemy * defensed);
         StartCoroutine("HitMaterialChange");
-        Life = (damageTaken * -1);
-        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damage + " defesa ," + defenseTemp.ToString("F0") + ", Tipo de dano: " + t);
+        CurrentLife = (damageTaken * -1);
+        if (isCritical)
+        {
+            combatTextManager.CriticText(gameObject.transform, damageTaken);
+        }
+        else
+        {
+
+            combatTextManager.AttackText(gameObject.transform, damageTaken);
+        }
+        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damageEnemy + " defesa ," + defenseTemp.ToString("F0") + ", Tipo de dano: " + t);
 
     }
     private IEnumerator HitMaterialChange()
