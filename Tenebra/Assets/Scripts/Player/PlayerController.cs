@@ -53,9 +53,23 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (selectedTarget)
+        {
+
+        }
         if (SelectedTarget == null)
         {
             isAttacking = false;
+        }
+        else
+        {
+            if (selectedTarget.GetComponent<EnemyController>().Dead)
+            {
+                StopAllCoroutines();
+                isReadyAttack = false;
+                isAttacking = false;
+                selectedTarget = null;
+            }
         }
         if (IsAttacking)
         {

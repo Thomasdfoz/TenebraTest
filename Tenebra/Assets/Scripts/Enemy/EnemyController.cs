@@ -5,27 +5,33 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    public CombatTextManager combatTextManager;
+    [SerializeField] private CombatTextManager combatTextManager;
+    [SerializeField] private float Speed;
+    [SerializeField] private float attackSpeed;
+    [SerializeField] private float rangeAttack;
     [SerializeField] private Material materialHit;
     [SerializeField] SkinnedMeshRenderer render;
     [SerializeField] private float maxLife;
-    private float currentLife;
     [SerializeField] private int damage;
+    [SerializeField] private int chanceCritic;
     [SerializeField] private float myArmor;
     [SerializeField] private float myResistence;
     [SerializeField] private DamageType damageType;
     [SerializeField] private GameObject body;
+
+
+    [SerializeField] private GameObject target;
     private Animator anim;
     private Collider col;
     private NavMeshAgent agent;
     private Outline outline;
+    private float currentLife;
 
-
-
-
-
+    private bool isReadyAttack;
+    private float moveSpeed;
     private Material mat;
     private bool dead;
+    private bool isReadyWalk;
 
     public float MyArmor { get => myArmor; set => myArmor += value; }
     public float MyResistence { get => myResistence; set => myResistence += value; }
@@ -41,10 +47,33 @@ public class EnemyController : MonoBehaviour
     }
 
     public float MaxLife { get => maxLife; set => maxLife = value; }
+    public float MoveSpeed { get { return moveSpeed / 1000; } set => moveSpeed = value; }
 
-    // Start is called before the first frame update
-    void Start()
+    public bool Dead { get => dead; set => dead = value; }
+    public float AttackSpeed
     {
+        get => (1 / (attackSpeed / 100));
+        set
+        {
+            if (value > 200)
+            {
+                attackSpeed = 200;
+            }
+            else if (value < 25)
+            {
+                attackSpeed = 25;
+            }
+            else
+            {
+                attackSpeed = value;
+            }
+
+        }
+    }
+
+    private void Awake()
+    {
+        MoveSpeed = Speed;
         render = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
         col = GetComponent<Collider>();
@@ -52,48 +81,111 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         mat = render.material;
         CurrentLife = MaxLife;
+
+    }
+    void Start()
+    {
+        isReadyAttack = true;
+        isReadyWalk = true;
+        agent.speed = MoveSpeed;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (currentLife == 0)
+        if (!dead)
         {
-            StartCoroutine("Dead");
+
+            if (currentLife == 0)
+            {
+                StartCoroutine(DeadCourotine());
+            }
+            if (target)
+            {
+                if (!target.GetComponent<PlayerStats>().IsDead)
+                {
+                    if (isReadyWalk)
+                    {
+                        MovePosition(target.transform.position);
+                    }
+                }
+            }
+            else
+            {
+                agent.isStopped = true;
+            }
+            if (agent.velocity != new Vector3(0, 0, 0))
+            {
+                anim.SetBool("Run", true);
+            }
+            else
+            {
+                anim.SetBool("Run", false);
+            }
         }
+
+    }
+    public void MovePosition(Vector3 position)
+    {
+        agent.isStopped = false;
+        agent.SetDestination(position);
+        if (Vector3.Distance(transform.position, target.transform.position) < rangeAttack)
+        {
+            AttackAnim();
+        }
+    }
+    public void StartCountDownAttack()
+    {
+        isReadyWalk = true;
+        StartCoroutine(AttackCountDown());
+    }
+    public void AttackAnim()
+    {
+        if (isReadyAttack)
+        {
+            isReadyWalk = false;
+            isReadyAttack = false;
+            anim.SetTrigger("Attack");
+        }
+    }
+    private void DamageAttack()
+    {
+        bool isCritic = Critic.IsCritic(chanceCritic);
+        SendDamage sendDamage = new SendDamage(damage, isCritic, damageType);
+        target.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
     }
     public void TookDamage(SendDamage sendDamage)
     {
-
-        int damageEnemy = sendDamage.Damage;
-        DamageType t = sendDamage.DamageType;
-        bool isCritical = sendDamage.IsCritical;
-        float defenseTemp = 0;
-        if (t == DamageType.magic)
+        if (!Dead)
         {
-            defenseTemp = Random.Range(MyResistence * 0.1f, MyResistence);
-        }
-        else if (t == DamageType.physical)
-        {
-            defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
-        }
+            int damageEnemy = sendDamage.Damage;
+            DamageType t = sendDamage.DamageType;
+            bool isCritical = sendDamage.IsCritical;
+            float defenseTemp = 0;
+            if (t == DamageType.magic)
+            {
+                defenseTemp = Random.Range(MyResistence * 0.1f, MyResistence);
+            }
+            else if (t == DamageType.physical)
+            {
+                defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
+            }
 
-        float defensed = 1 - defenseTemp / 500;
-        if (defensed < 0.1f) defensed = 0.1f;
-        int damageTaken = Mathf.FloorToInt(damageEnemy * defensed);
-        StartCoroutine("HitMaterialChange");
-        CurrentLife = (damageTaken * -1);
-        if (isCritical)
-        {
-            combatTextManager.CriticText(gameObject.transform, damageTaken);
-        }
-        else
-        {
+            float defensed = 1 - defenseTemp / 500;
+            if (defensed < 0.1f) defensed = 0.1f;
+            int damageTaken = Mathf.FloorToInt(damageEnemy * defensed);
+            StartCoroutine("HitMaterialChange");
+            CurrentLife = (damageTaken * -1);
+            if (isCritical)
+            {
+                combatTextManager.CriticText(gameObject.transform, damageTaken);
+            }
+            else
+            {
 
-            combatTextManager.AttackText(gameObject.transform, damageTaken);
+                combatTextManager.AttackText(gameObject.transform, damageTaken);
+            }
         }
-        Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed).ToString("P") + " defendido, dano inimigo " + damageEnemy + " defesa ," + defenseTemp.ToString("F0") + ", Tipo de dano: " + t);
-
     }
     private IEnumerator HitMaterialChange()
     {
@@ -101,14 +193,15 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         render.material = mat;
     }
-    private IEnumerator Dead()
+    private IEnumerator DeadCourotine()
     {
+        GetComponentInChildren<StatsBar>().gameObject.SetActive(false);
         body.SetActive(false);
         anim.enabled = false;
         col.enabled = false;
         agent.enabled = false;
         outline.enabled = false;
-        dead = true;
+        Dead = true;
         yield return new WaitForSeconds(2f);
         Destroy(this.gameObject);
     }
@@ -122,5 +215,34 @@ public class EnemyController : MonoBehaviour
         {
             return false;
         }
+    }
+
+
+    private void OnTriggerStay(Collider col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            if (!target)
+            {
+                target = col.gameObject;
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            if (col.gameObject == target)
+            {
+                target = null;
+            }
+        }
+    }
+    private IEnumerator AttackCountDown()
+    {
+        isReadyAttack = false;
+        yield return new WaitForSeconds(AttackSpeed);
+        isReadyAttack = true;
     }
 }

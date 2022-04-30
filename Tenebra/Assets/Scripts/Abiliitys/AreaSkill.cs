@@ -8,22 +8,26 @@ public class AreaSkill : MonoBehaviour
     const int BURNINGTIME = 2;
 
     public AreaSkills_Scriptable skillObject;
-    private List<Collider> targets = new List<Collider>();
+    private List<Collider> targetsBurningDamage = new List<Collider>();
     private GameController gameController;
+    private GameObject target;
+    private bool startDamage = false;
     // Start is called before the first frame update
     void Start()
     {
         gameController = FindObjectOfType<GameController>() as GameController;
-        StartCoroutine("DeathTime");
+        StartCoroutine(DeathTime());
+        StartCoroutine(StartDamage());
     }
+    
 
     private void OnTriggerStay(Collider col)
     {
         if (col.CompareTag("Object"))
         {
-            if (!targets.Contains(col))
+            if (!targetsBurningDamage.Contains(col))
             {
-                targets.Add(col);
+                targetsBurningDamage.Add(col);
                 if (skillObject.isBurning)
                 {
                     StartCoroutine("BurningDamage", col);
@@ -33,12 +37,25 @@ public class AreaSkill : MonoBehaviour
     }
     private void OnTriggerEnter(Collider col)
     {
+
         if (col.CompareTag("Object"))
         {
-            SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(skillObject.damage), false, DamageType.magic);
-            col.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
+            if (!startDamage)
+            {
+                SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(skillObject.damage), false, DamageType.magic);
+                col.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
+            }
         }
-
+    }
+    private void OnTriggerExit(Collider col)
+    {
+        if (col.CompareTag("Object"))
+        {
+            if (targetsBurningDamage.Contains(col))
+            {
+                targetsBurningDamage.Remove(col);
+            }
+        }
     }
     private IEnumerator DeathTime()
     {
@@ -54,9 +71,15 @@ public class AreaSkill : MonoBehaviour
             SendDamage sendDamage = new SendDamage(Mathf.FloorToInt(skillObject.damageBurning), false, DamageType.magic);
             col.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
         }
-        if (targets.Contains(col))
+        if (targetsBurningDamage.Contains(col))
         {
             StartCoroutine("BurningDamage", col);
         }
     }
+    private IEnumerator StartDamage()
+    {
+        yield return new WaitForSeconds(0.1f);
+        startDamage = true;
+    }
 }
+

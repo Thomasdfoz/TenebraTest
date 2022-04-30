@@ -27,7 +27,7 @@ MonoBehaviour:
   triggerName: castSkill
   cast: {fileID: 6140239667881698734, guid: 9e289063153dfa94e9c9122661321604, type: 3}
   isBurning: 1
-  damageBurning: 50
-  timeDuration: 5
+  damageBurning: 10
+  timeDuration: 20
   width: 7
   height: 7

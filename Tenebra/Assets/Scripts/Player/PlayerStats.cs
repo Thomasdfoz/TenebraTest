@@ -160,13 +160,12 @@ public class PlayerStats : MonoBehaviour
         Defense = 100;
         Resistence = 0;
         chanceCritic = 100;
-        
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log("Life: " + life.CurrentValue);
     }
     #region ------------------------My Functions-------------------
     public void Heal(int healValue)
@@ -181,38 +180,42 @@ public class PlayerStats : MonoBehaviour
             int damageEnemy = sendDamage.Damage;
             DamageType t = sendDamage.DamageType;
             bool isCritical = sendDamage.IsCritical;
-            float damage = 0;
             float defenseTemp = 0;
             float defensed = 0;
-            int damageTaken = 0;
+            int damage = 0;
             if (t == DamageType.magic)
             {
-                damage = damageEnemy;
                 defenseTemp = Random.Range(Resistence * 0.1f, Resistence);
 
             }
             else if (t == DamageType.physical)
             {
-                
+
                 defenseTemp = Random.Range(Defense * 0.1f, Defense);
             }
 
             defensed = 1 - (defenseTemp / 500);
             if (defensed < 0.1f) defensed = 0.1f;
-            damageTaken = Mathf.FloorToInt(damage * defensed);
-            Life.Loses(damageTaken);
-            if (isCritical)
+            damage = Mathf.FloorToInt(damageEnemy * defensed);
+            Life.Loses(damage);
+            if (damage <= 0)
             {
-                combatTextManager.MyCriticText(ExitText, damageTaken);
+                combatTextManager.MissText(ExitText);
             }
             else
             {
-                combatTextManager.MyAttackText(ExitText, damageTaken);
+                if (isCritical)
+                {
+                    combatTextManager.MyCriticText(ExitText, damage);
+                }
+                else
+                {
+                    combatTextManager.MyAttackText(ExitText, damage);
 
+                }
             }
-            Debug.Log(damageTaken + ", de dano tomado. " + (1 - defensed) * 100 + "% defendido, dano inimigo " + damage + " defesatemp ," + defenseTemp + " My," + Damage);
         }
-        
+
     }
     public void Buff()
     {

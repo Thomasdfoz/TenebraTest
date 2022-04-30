@@ -36,7 +36,6 @@ public class GameController : MonoBehaviour
         {
             player.gameObject.SetActive(false);
             PlayerStats.IsDead = true;
-            Debug.Log("morto");
         }
         #region teste de burning
         //----------------------------teste de burning esse codigo deve ficar dentro da magia ou flecha com o dano burning --------------
