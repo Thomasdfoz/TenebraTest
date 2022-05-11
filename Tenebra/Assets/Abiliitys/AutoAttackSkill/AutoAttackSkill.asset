@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: AutoAttackSkill
   m_EditorClassIdentifier: 
   skillType: 2
-  iconImage: {fileID: 0}
+  iconImage: {fileID: -930560990, guid: 3fbf1528046bf3b49a67e9c8b73c8ed8, type: 3}
   nameSkill: Teste
   costMana: 30
-  countdown: 0
+  countdown: 7
   animationClip: {fileID: 7400000, guid: af8a305bec60a0d4bb2f51a513fe1e33, type: 3}
   triggerName: attackSkill
-  damage: 50
+  damage: 10
   damageType: 0
   waeponType: 1
   TimeAnimation: 1

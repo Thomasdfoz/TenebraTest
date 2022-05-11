@@ -13,19 +13,17 @@ MonoBehaviour:
   m_Name: Projectile
   m_EditorClassIdentifier: 
   skillType: 1
-  iconImage: {fileID: -1400669831, guid: 4340e50c1ca2cab45af9f53e29ebf612, type: 3}
+  iconImage: {fileID: -1425254283, guid: 3fbf1528046bf3b49a67e9c8b73c8ed8, type: 3}
   nameSkill: Projectile
   costMana: 50
-  countdown: 2
+  countdown: 8
   damage: 0
-  prefabEffect: {fileID: 3337606409741826695, guid: 8576af3280addbd4298e1bc144e4efc6,
-    type: 3}
+  prefab: {fileID: 3337606409741826695, guid: 8576af3280addbd4298e1bc144e4efc6, type: 3}
   imageEffect: {fileID: -1400669831, guid: 4340e50c1ca2cab45af9f53e29ebf612, type: 3}
   animationClip: {fileID: 7400000, guid: b317de3e072b8ea4e905181f437cee88, type: 3}
   TimeAnimationCast: 0.3
   TimeAnimation: 1
   triggerName: castSkill
-  cast: {fileID: 6140239667881698734, guid: 9e289063153dfa94e9c9122661321604, type: 3}
   isBurning: 0
   projectileType: 1
   damageBurning: 0

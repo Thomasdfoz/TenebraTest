@@ -17,24 +17,17 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
 
     private bool isLook = false;
     private GameController gameController;
-    private GameObject cicleRanged;
     private GameObject obj;
-    private RawImage mira;
-    private SendDamage damage2;
     Joystick joy;
     public override void DownClick(AbiliityButton abiliityButton)
     {
         base.DownClick(abiliityButton);
-        this.gameController = abiliityButton.gameController;
+        this.gameController = abiliityButton.GameController;
         this.obj = abiliityButton.gameObject;
-        this.cicleRanged = abiliityButton.cicleRanged;
         this.joy = abiliityButton.Joy;
-        this.mira = abiliityButton.mira;
-
-        this.obj.GetComponent<Image>().enabled = false;
         this.joy.gameObject.SetActive(true);
         this.gameController.PlayerController.RangedSelectTarget();
-        this.cicleRanged.SetActive(true);
+        padSkillButton.cicleRanged.SetActive(true);
         //essa animaçao vai estar dentro do scriptable tambem "animSpecialAttack"
         if (gameController.PlayerController.SelectedTarget)
         {
@@ -46,22 +39,24 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
             }
             else
             {
+                IsSuccess = false;
                 Debug.Log("Não pode attacar 2x ao mesmo tempo");
             }
         }
         else
         {
+            IsSuccess = false;
             Debug.Log("Nenhum Alvo Selecionado");
         }
     }
    
     public override void UpClick(AbiliityButton abiliityButton)
     {
-        cicleRanged.SetActive(false);
+        padSkillButton.cicleRanged.SetActive(false);
         obj.GetComponent<Image>().enabled = true;
         joy.gameObject.SetActive(false);
-        mira.gameObject.SetActive(false);
-        mira.rectTransform.localPosition = new Vector3(0, 0, 0);
+        padSkillButton.mira.gameObject.SetActive(false);
+        padSkillButton.mira.rectTransform.localPosition = new Vector3(0, 0, 0);
     }
     private void Attack()
     {

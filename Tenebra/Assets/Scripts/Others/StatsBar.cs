@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class StatsBar : MonoBehaviour
 {
+    public GameObject controller;
     public Image LifeFilled;
     public Image ManaFilled;
-    public GameObject controller;
     public bool isPlayer;
 
     private float currentLife;
@@ -15,7 +15,7 @@ public class StatsBar : MonoBehaviour
     private float currentMana;
     private float maxMana;
       
-    void FixedUpdate()
+    public void UpdateStatsBar()
     {
         if (isPlayer)
         {

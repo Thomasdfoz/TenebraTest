@@ -1,0 +1,247 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class SumonedSkeletonScript : MonoBehaviour
+{
+    public AreaSkills_Scriptable skillObject;
+    [SerializeField] private CombatTextManager combatTextManager;
+    [SerializeField] private StatsBar statsBar;
+    [SerializeField] private float speed;
+    [SerializeField] private float attackSpeed;
+    [SerializeField] private float rangeAttack;
+    [SerializeField] SkinnedMeshRenderer render;
+    [SerializeField] private float maxLife;
+    [SerializeField] private int chanceCritic;
+    [SerializeField] private float myArmor;
+    [SerializeField] private float myResistence;
+    [SerializeField] private DamageType damageType;
+    [SerializeField] private GameObject body;
+    [SerializeField] private GameObject target;
+
+    private float damage;
+    private RangeOfVision rangeOfVision;
+    private Animator anim;
+    private Collider col;
+    private NavMeshAgent agent;
+    private Outline outline;
+    private float currentLife;
+
+    private bool isReadyAttack;
+    private float moveSpeed;
+    private Material mat;
+    private bool dead;
+    private bool isReadyWalk;
+
+    public float MyArmor { get => myArmor; set => myArmor += value; }
+    public float MyResistence { get => myResistence; set => myResistence += value; }
+    public float CurrentLife
+    {
+        get => currentLife;
+        set
+        {
+            currentLife += Mathf.RoundToInt(value);
+            if (currentLife > MaxLife) currentLife = MaxLife;
+            if (currentLife < 0) currentLife = 0;
+        }
+    }
+
+    public float MaxLife { get => maxLife; set => maxLife = value; }
+    public float MoveSpeed { get { return moveSpeed / 1000; } set => moveSpeed = value; }
+
+    public bool Dead { get => dead; set => dead = value; }
+    public float AttackSpeed
+    {
+        get => (1 / (attackSpeed / 100));
+        set
+        {
+            if (value > 200)
+            {
+                attackSpeed = 200;
+            }
+            else if (value < 25)
+            {
+                attackSpeed = 25;
+            }
+            else
+            {
+                attackSpeed = value;
+            }
+
+        }
+    }
+
+    private void Awake()
+    {
+        MoveSpeed = speed;
+        render = GetComponentInChildren<SkinnedMeshRenderer>();
+        anim = GetComponent<Animator>();
+        col = GetComponent<Collider>();
+        outline = GetComponent<Outline>();
+        agent = GetComponent<NavMeshAgent>();
+        mat = render.material;
+        CurrentLife = MaxLife;
+        rangeOfVision = GetComponentInChildren<RangeOfVision>();
+        agent.stoppingDistance = rangeAttack;
+    }
+    void Start()
+    {
+        statsBar.UpdateStatsBar();
+        isReadyAttack = true;
+        isReadyWalk = true;
+        agent.speed = MoveSpeed;
+        damage = skillObject.damage;
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (!dead)
+        {
+            target = rangeOfVision.CheckLook();
+            if (currentLife == 0)
+            {
+                StartCoroutine(DeadCourotine());
+            }
+            if (target)
+            {
+                if (!target.GetComponent<PlayerStats>().IsDead)
+                {
+                    if (isReadyWalk)
+                    {
+                        MovePosition(target.transform.position);
+                    }
+                }
+            }
+            else
+            {
+                agent.isStopped = true;
+            }
+            if (agent.velocity != new Vector3(0, 0, 0))
+            {
+                anim.SetBool("Run", true);
+            }
+            else
+            {
+                anim.SetBool("Run", false);
+            }
+        }
+
+    }
+    public void LookTarget(Vector3 lookTarget)
+    {
+        Vector3 targ = new(lookTarget.x, -0.5f, lookTarget.z);
+        Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - transform.position, 5f, 5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 10f);
+    }
+    public void MovePosition(Vector3 enemyTarget)
+    {
+        if (!dead)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(enemyTarget);
+            if (Vector3.Distance(transform.position, target.transform.position) < rangeAttack)
+            {
+                LookTarget(enemyTarget);
+                AttackAnim();
+            }
+        }
+    }
+    public void StartCountDownAttack()
+    {
+        isReadyWalk = true;
+        StartCoroutine(AttackCountDown());
+    }
+    public void AttackAnim()
+    {
+        if (isReadyAttack)
+        {
+            isReadyWalk = false;
+            isReadyAttack = false;
+            anim.SetTrigger("Attack");
+        }
+    }
+    private void DamageAttack()
+    {
+        bool isCritic = Critic.IsCritic(chanceCritic);
+        float damageTemp = damage;
+        if (isCritic)
+        {
+            damageTemp = SkillCalculator.CalculeCriticAttack(damage);
+
+        }
+        else
+        {
+            damageTemp = SkillCalculator.CalculeNormalAttack(damage);
+        }
+        SendDamage sendDamage = new SendDamage(Mathf.RoundToInt(damageTemp), isCritic, damageType);
+
+        target.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
+    }
+    public void TookDamage(SendDamage sendDamage)
+    {
+        if (!Dead)
+        {
+            int damageEnemy = sendDamage.Damage;
+            DamageType t = sendDamage.DamageType;
+            bool isCritical = sendDamage.IsCritical;
+            float defenseTemp = 0;
+            if (t == DamageType.magic)
+            {
+                defenseTemp = Random.Range(MyResistence * 0.1f, MyResistence);
+            }
+            else if (t == DamageType.physical)
+            {
+                defenseTemp = Random.Range(MyArmor * 0.1f, MyArmor);
+            }
+
+            float defensed = 1 - defenseTemp / 500;
+            if (defensed < 0.1f) defensed = 0.1f;
+            int damageTaken = Mathf.RoundToInt(damageEnemy * defensed);
+            StartCoroutine("HitMaterialChange");
+            CurrentLife = (damageTaken * -1);
+            if (damageTaken <= 0)
+            {
+                combatTextManager.MissText(gameObject.transform);
+            }
+            else
+            {
+                if (isCritical)
+                {
+                    combatTextManager.CriticText(gameObject.transform, damageTaken);
+                }
+                else
+                {
+                    combatTextManager.AttackText(gameObject.transform, damageTaken);
+                }
+            }
+            statsBar.UpdateStatsBar();
+        }
+    }
+    private IEnumerator HitMaterialChange()
+    {
+        render.material.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+        render.material.color = Color.white;
+    }
+    private IEnumerator DeadCourotine()
+    {
+        GetComponentInChildren<StatsBar>().gameObject.SetActive(false);
+        body.SetActive(false);
+        anim.enabled = false;
+        col.enabled = false;
+        agent.enabled = false;
+        outline.enabled = false;
+        Dead = true;
+        yield return new WaitForSeconds(2f);
+        Destroy(this.gameObject);
+    }
+
+    private IEnumerator AttackCountDown()
+    {
+        isReadyAttack = false;
+        yield return new WaitForSeconds(AttackSpeed);
+        isReadyAttack = true;
+    }
+}

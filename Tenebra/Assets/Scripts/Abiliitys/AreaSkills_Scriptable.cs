@@ -13,7 +13,6 @@ public class AreaSkills_Scriptable : Skills_Scriptable
     public float TimeAnimationCast;
     public float TimeAnimation;
     public string triggerName;
-    public GameObject cast;
     public bool isBurning;
     public int damageBurning;
     public int timeDuration;
@@ -33,41 +32,40 @@ public class AreaSkills_Scriptable : Skills_Scriptable
     public override void DownClick(AbiliityButton abiliityButton)
     {
         base.DownClick(abiliityButton);
-        posY = 0;
+        posY = 0.1f;
         posX = 0;
         posZ = 0;
         joy = abiliityButton.Joy;
-        abiliityButton.areaEffect.sprite = imageEffect;
-        abiliityButton.areaEffect.rectTransform.sizeDelta = new Vector2(width, height);
-        abiliityButton.gameObject.GetComponent<Image>().enabled = false;
+        padSkillButton.areaEffect.sprite = imageEffect;
+        padSkillButton.areaEffect.rectTransform.sizeDelta = new Vector2(width, height);
         joy.gameObject.SetActive(true);
         isMoving = true;
     }
     public override void UpClick(AbiliityButton abiliityButton)
     {
         base.UpClick(abiliityButton);
-        abiliityButton.areaEffect.gameObject.SetActive(false);
+        padSkillButton.areaEffect.gameObject.SetActive(false);
         abiliityButton.gameObject.GetComponent<Image>().enabled = true;
         joy.gameObject.SetActive(false);
         if (isActive)
         {
-            abiliityButton.gameController.PlayerController.SkillAnimation(abiliityButton.areaEffect.transform, 0.5f, triggerName);
+            abiliityButton.GameController.PlayerController.SkillAnimation(padSkillButton.areaEffect.transform, 0.5f, triggerName);
         }
         else
         {
-            abiliityButton.gameController.PlayerController.SkillAnimation(0.5f, triggerName);
+            abiliityButton.GameController.PlayerController.SkillAnimation(0.5f, triggerName);
         }
         Cast(abiliityButton);
         isMoving = false;
         isActive = false;
-        posY = 0;
+        posY = 0.1f;
         posX = 0;
         posZ = 0;
     }
     public override void MoveAreaSkill(AbiliityButton abiliityButton)
     {
         base.MoveAreaSkill(abiliityButton);
-        RectTransform[] limites = abiliityButton.limites;
+        RectTransform[] limites = padSkillButton.limites;
         if (isMoving)
         {
             posX += (joy.Horizontal / 4);
@@ -90,20 +88,20 @@ public class AreaSkills_Scriptable : Skills_Scriptable
                 posZ = limites[0].anchoredPosition3D.z;
 
             }
-            abiliityButton.areaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
-            if (abiliityButton.areaEffect.rectTransform.anchoredPosition3D.magnitude > 0.1f)
+            padSkillButton.areaEffect.rectTransform.anchoredPosition3D = new Vector3(posX, posY, posZ);
+            if (padSkillButton.areaEffect.rectTransform.anchoredPosition3D.magnitude > 0.1f)
             {
                 isActive = true;
             }
         }
-        Vector3 difference = abiliityButton.areaEffect.transform.position - abiliityButton.gameController.player.transform.position;
+        Vector3 difference = padSkillButton.areaEffect.transform.position - abiliityButton.GameController.Player.transform.position;
         float rotationZ = Mathf.Atan2(difference.z, difference.x) * Mathf.Rad2Deg;
-        abiliityButton.areaEffect.transform.rotation = Quaternion.Euler(90.0f, 0.0f, rotationZ - 90f);
+        padSkillButton.areaEffect.transform.rotation = Quaternion.Euler(90.0f, 0.0f, rotationZ - 90f);
     }
     private void Cast(AbiliityButton abiliityButton)
     {
-        Cast c = cast.GetComponent<Cast>();
-        c.Constructor(abiliityButton.areaEffect.transform, prefabEffect, 0);
+        Cast c = padSkillButton.gameObject.GetComponent<Cast>();
+        c.Constructor(padSkillButton.areaEffect.transform, prefabEffect, 0);
         if (animationClip.events.Length <= 0)
         {
             AnimationEvent AnimEvent = new();
@@ -121,7 +119,7 @@ public class AreaSkills_Scriptable : Skills_Scriptable
         {
             animationClip.events[0].objectReferenceParameter = c;
         }
-        abiliityButton.gameController.PlayerController.IsAnimationEnd = false;
+        abiliityButton.GameController.PlayerController.IsAnimationEnd = false;
     }
 }
 

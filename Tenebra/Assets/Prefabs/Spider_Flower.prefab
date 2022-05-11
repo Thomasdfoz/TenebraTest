@@ -304,9 +304,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255446500f4d8d4084ae3e4e25f0c38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 7442129382293803218}
   LifeFilled: {fileID: 559137653}
   ManaFilled: {fileID: 0}
-  controller: {fileID: 7442129382293803218}
   isPlayer: 0
 --- !u!1 &7440009679388495446
 GameObject:
@@ -1150,7 +1150,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7445499670462228440}
   - component: {fileID: 7396235747973589138}
-  m_Layer: 6
+  - component: {fileID: 1122584294}
+  - component: {fileID: 1122584293}
+  m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1255,6 +1257,31 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.000000059604645, y: 0.2768341, z: -0.017697692}
     m_Extent: {x: 1.0300596, y: 0.77888477, z: 1.2026013}
   m_DirtyAABB: 0
+--- !u!135 &1122584294
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7442034773741058490}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 10
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1122584293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7442034773741058490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98ffbae7008d3f040a5f9b27dad56abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7442067052947489366
 GameObject:
   m_ObjectHideFlags: 0
@@ -1331,10 +1358,9 @@ GameObject:
   - component: {fileID: 7356435737752523734}
   - component: {fileID: 7441018100271317843}
   - component: {fileID: 1326856432154520639}
-  - component: {fileID: 7441018099900853157}
-  - component: {fileID: 1057239369}
   - component: {fileID: 7441018100271317852}
   - component: {fileID: 7441018101016883640}
+  - component: {fileID: 415442995}
   m_Layer: 6
   m_Name: Spider_Flower
   m_TagString: Object
@@ -1392,9 +1418,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!195 &1326856432154520639
 NavMeshAgent:
@@ -1405,46 +1431,19 @@ NavMeshAgent:
   m_GameObject: {fileID: 7442129382293803218}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1.2
+  m_Radius: 0.7
   m_Speed: 0.5
   m_Acceleration: 3
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 1.48
+  m_Height: 1
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
---- !u!135 &7441018099900853157
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7442129382293803218}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 6
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!136 &1057239369
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7442129382293803218}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.1986878
-  m_Height: 4
-  m_Direction: 1
-  m_Center: {x: 0.013183057, y: 1.9778711, z: 0}
 --- !u!114 &7441018100271317852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1476,20 +1475,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatTextManager: {fileID: 0}
-  Speed: 500
+  expValue: 100
+  statsBar: {fileID: 614448164}
+  speed: 500
   attackSpeed: 100
-  rangeAttack: 1.5
+  rangeAttack: 1.7
   materialHit: {fileID: 2100000, guid: eee664c2a3ca9ac4ba687fc20f6263ae, type: 2}
   render: {fileID: 0}
-  maxLife: 600
-  damage: 1
+  maxLife: 100
+  damage: 5
   chanceCritic: 30
   myArmor: 100
   myResistence: 100
   damageType: 0
   body: {fileID: 7442034773741058490}
   target: {fileID: 0}
-  isReadyAttack: 0
+--- !u!65 &415442995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7442129382293803218}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.987773, y: 1.4491541, z: 2.1734147}
+  m_Center: {x: -0.01559639, y: 0.72426116, z: 0.115095854}
 --- !u!1 &7442130612345701080
 GameObject:
   m_ObjectHideFlags: 0

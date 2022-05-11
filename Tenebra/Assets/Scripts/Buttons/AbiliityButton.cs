@@ -7,93 +7,122 @@ using UnityEngine.EventSystems;
 
 public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IDragHandler
 {
-    [Header("Main")]
-    public GameController gameController;
     public int buttonNumber;
-    [Header("Effects")]
-    public Image areaEffect;
-    public Image projectileEffect;
-    public Transform lookObj;
-    public RawImage mira;
-    [Header("GameObjs")]
-    public GameObject spanwPoint;
-    public GameObject cicleRanged;
-    [Header("Limites")]
-    public RectTransform[] limites;
-    public Joystick joy;
+    public Image countDownFilled;
+    public Text countDownText;
 
-
-
-
-    #region privates
-    //skills types
-    Skills_Scriptable skills_Scriptable;
+    private GameController gameController;
+    private PadSkillButton padSkillButton;
+    private Joystick joy;
 
     private bool isAreaSkill;
     private bool isAutoAttackSkill;
     private bool isTargetSkill;
     private bool isProjectileSkill;
     private bool isHealSkill;
+    private bool inCountDown;
+    private float timeCountDown;
 
-    public Joystick Joy { get => joy; set => joy = value; }
+    private Skills_Scriptable skills_Scriptable;
+
     public bool IsAreaSkill { get => isAreaSkill; set => isAreaSkill = value; }
     public bool IsAutoAttackSkill { get => isAutoAttackSkill; set => isAutoAttackSkill = value; }
     public bool IsTargetSkill { get => isTargetSkill; set => isTargetSkill = value; }
     public bool IsProjectileSkill { get => isProjectileSkill; set => isProjectileSkill = value; }
     public bool IsHealSkill { get => isHealSkill; set => isHealSkill = value; }
 
-    #endregion
-    // Start is called before the first frame update
+    public Joystick Joy { get => joy; set => joy = value; }
+    public PadSkillButton PadSkillButton { get => padSkillButton; set => padSkillButton = value; }
+    public GameController GameController { get => gameController; set => gameController = value; }
+
+    private void Awake()
+    {
+        GameController = FindObjectOfType<GameController>();
+        PadSkillButton = FindObjectOfType<PadSkillButton>();
+        Joy = GetComponentInChildren<FixedJoystick>();
+    }
+
+
     void Start()
     {
-        Joy = GetComponentInChildren<FixedJoystick>();
         Joy.gameObject.SetActive(false);
+        inCountDown = false;
+        countDownFilled.enabled = false;
+        countDownText.enabled = false;
+        ChangeIconImage();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (IsAreaSkill)
+        if (inCountDown)
         {
-            skills_Scriptable.MoveAreaSkill(this);
+            timeCountDown -= Time.deltaTime;
+            countDownFilled.fillAmount = timeCountDown / skills_Scriptable.countdown;
+            countDownText.text = timeCountDown.ToString("0");
+            if (timeCountDown <= 0)
+            {
+                inCountDown = false;
+                countDownFilled.enabled = false;
+                countDownText.enabled = false;
+            }
         }
-        else if (IsProjectileSkill)
+        else
         {
-            skills_Scriptable.ProjectileRotation(this);
+            if (IsAreaSkill)
+            {
+                skills_Scriptable.MoveAreaSkill(this);
+            }
+            else if (IsProjectileSkill)
+            {
+                skills_Scriptable.ProjectileRotation(this);
+            }
         }
-
     }
     public void OnPointerUp(PointerEventData data)
     {
-        skills_Scriptable.UpClick(this);
-        Joy.OnPointerUp(data);
-        AllBooleanFalse();
+        if (!inCountDown)
+        {
+            skills_Scriptable.UpClick(this);
+            Joy.OnPointerUp(data);
+            if (skills_Scriptable.IsSuccess)
+            {
+                CountDown();
+            }
+            AllBooleanFalse();
+        }
     }
     public void OnPointerDown(PointerEventData data)
     {
-        AllBooleanFalse();
-        skills_Scriptable = gameController.skill[buttonNumber];
-        skills_Scriptable.DownClick(this);
+        if (!inCountDown)
+        {
+            AllBooleanFalse();
+            skills_Scriptable = GameController.skill[buttonNumber];
+            skills_Scriptable.DownClick(this);
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (joy.gameObject.activeInHierarchy)
+        if (!inCountDown)
         {
-            Joy.OnDrag(eventData);
-            if (Joy.Vertical > 0.3f || Joy.Horizontal > 0.3f || Joy.Vertical < -0.3f || Joy.Horizontal < -0.3f)
+            if (joy.gameObject.activeInHierarchy)
             {
-                if (IsAreaSkill)
+                Joy.OnDrag(eventData);
+                if (Joy.Vertical > 0.3f || Joy.Horizontal > 0.3f || Joy.Vertical < -0.3f || Joy.Horizontal < -0.3f)
                 {
-                    areaEffect.gameObject.SetActive(true);
-                }
-                else if (IsProjectileSkill)
-                {
-                    projectileEffect.gameObject.SetActive(true);
-                }
-                else if (IsAutoAttackSkill)
-                {
-                    mira.gameObject.SetActive(true);
+                    if (IsAreaSkill)
+                    {
+                        PadSkillButton.areaEffect.gameObject.SetActive(true);
+                    }
+                    else if (IsProjectileSkill)
+                    {
+                        PadSkillButton.projectileEffect.gameObject.SetActive(true);
+                    }
+                    else if (IsAutoAttackSkill)
+                    {
+                        PadSkillButton.mira.gameObject.SetActive(true);
+                    }
                 }
             }
         }
@@ -106,4 +135,18 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
         IsHealSkill = false;
         IsProjectileSkill = false;
     }
+
+    private void CountDown()
+    {
+        timeCountDown = skills_Scriptable.countdown;
+        inCountDown = true;
+        countDownFilled.enabled = true;
+        countDownText.enabled = true;
+    }
+
+    private void ChangeIconImage()
+    {
+        GetComponent<Image>().sprite = GameController.skill[buttonNumber].iconImage;
+    }
+
 }

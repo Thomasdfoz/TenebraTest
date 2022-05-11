@@ -1,61 +1,72 @@
-public abstract class GenericSkillClass : IGenericSkillClass
+using UnityEngine;
+public abstract class GenericSkillClass
 {
-    protected int currentLevel;
+    private int currentLevel;
     private long currentExp;
-    protected long previousExpLevel;
-    protected long nextExpLevel;
+    private long previousExpLevel;
+    private long nextExpLevel;
     public int CurrentLevel
     {
         get => currentLevel;
-        
+        set
+        {
+            if (value <= 1)
+            {
+                value = 1;
+            }
+            currentLevel = value;
+        }
+
     }
-    public long CurrentExp
+    public virtual long CurrentExp
     {
         get => currentExp;
         set
         {
-            if (value < 0)
-            {
-                value = 0;
-            }
             currentExp = value;
-            if (currentExp > nextExpLevel)
+            if (currentExp <= 0)
             {
-                levelUp(currentExp);
-            }
-            if (currentExp < previousExpLevel)
-            {
-                levelDown(currentLevel);
+                currentExp = 0;
             }
         }
     }
-    public long PreviousExpLevel { get => previousExpLevel; }
-    public long NextExpLevel { get => nextExpLevel; }
 
+    public long PreviousExpLevel { get => previousExpLevel; set => previousExpLevel = value; }
+    public long NextExpLevel { get => nextExpLevel; set => nextExpLevel = value; }
 
-    public virtual void levelUp(long curtExp)
+    public virtual void GainExp(int exp, GameController gameController)
     {
-        currentLevel++;
-        SetExp(currentLevel);
-        if (currentExp > nextExpLevel)
+        CurrentExp += exp;
+        if (CurrentExp >= NextExpLevel)
         {
-            levelUp(currentExp);
+            levelUp(gameController);
         }
     }
-    public virtual void levelDown(long curtExp)
+    public virtual void LosesExp(int exp, GameController gameController)
     {
-        currentLevel--;
-        SetExp(currentLevel);
-        if (currentExp < previousExpLevel)
+        CurrentExp -= exp;
+        if (CurrentExp < PreviousExpLevel)
         {
-            levelDown(currentLevel);
+            levelDown(gameController);
         }
     }
-    public abstract long Formula(int level);
-    public void SetExp(int level)
+    protected virtual void levelUp(GameController gameController)
     {
-        nextExpLevel = Formula(level);
-        previousExpLevel = Formula(level - 1);
-
+        CurrentLevel += 1;
+        SetExp(CurrentLevel, gameController);
     }
+    protected virtual void levelDown(GameController gameController)
+    {
+        CurrentLevel -= 1;
+        SetExp(CurrentLevel, gameController);
+    }
+    protected abstract long Formula(int level);
+    protected virtual void SetExp(int level, GameController gameController)
+    {
+        NextExpLevel = Formula(level);
+        PreviousExpLevel = Formula(level - 1);
+        if (CurrentExp >= NextExpLevel) levelUp(gameController);
+        if (CurrentExp < PreviousExpLevel) levelDown(gameController);
+    }
+
 }

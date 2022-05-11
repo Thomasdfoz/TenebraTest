@@ -5,12 +5,21 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     #region ------------------------Main---------------------------
-    public CombatTextManager combatTextManager;
-    public Transform ExitText;
-    public BuffedManager buffedManager;
+    [Header("Main")]
+    [SerializeField] private CombatTextManager combatTextManager;
+    [SerializeField] private Transform ExitText;
+    [SerializeField] private BuffedManager buffedManager;
+    GameController gameController;
     private WaeponType waeponType;
     private DamageType damageType;
     private bool isDead;
+    private SkinnedMeshRenderer skinned;
+    #endregion
+    #region ------------------------StatsBar---------------------------
+    [Header("StatsBar")]
+    [SerializeField] StatsBar statsBar;
+    [SerializeField] StatsBar statsBar2;
+    [SerializeField] ExperienceBar experienceBar;
     #endregion
     #region ------------------------Stats--------------------------
     private AttributesClass life = new AttributesClass(100);
@@ -127,9 +136,9 @@ public class PlayerStats : MonoBehaviour
             {
                 range = 8;
             }
-            else if (value < 1f)
+            else if (value < 1.5f)
             {
-                range = 1f;
+                range = 1.5f;
             }
             else
             {
@@ -147,9 +156,14 @@ public class PlayerStats : MonoBehaviour
     public WaeponType WaeponType { get => waeponType; set => waeponType = value; }
     public DamageType DamageType { get => damageType; set => damageType = value; }
     public bool IsDead { get => isDead; set => isDead = value; }
+    public LevelClass Level { get => level; set => level = value; }
     #endregion
 
-
+    private void Awake()
+    {
+        skinned = GetComponentInChildren<SkinnedMeshRenderer>();
+        gameController = FindObjectOfType<GameController>();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -159,13 +173,28 @@ public class PlayerStats : MonoBehaviour
         AttackSpeed = 1;
         Defense = 100;
         Resistence = 0;
-        chanceCritic = 100;
-
+        chanceCritic = 20;
+        statsBar.UpdateStatsBar();
+        statsBar2.UpdateStatsBar();
+        experienceBar.UpdateExpBar();
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            GainExp(level, 100);
+            GainExp(meleeSkill, 100);
+            GainExp(magicSkill, 100);
+        }
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            LossesExp(level, 25);
+            LossesExp(meleeSkill, 25);
+            LossesExp(magicSkill, 25);
+        }
+
     }
     #region ------------------------My Functions-------------------
     public void Heal(int healValue)
@@ -196,7 +225,8 @@ public class PlayerStats : MonoBehaviour
 
             defensed = 1 - (defenseTemp / 500);
             if (defensed < 0.1f) defensed = 0.1f;
-            damage = Mathf.FloorToInt(damageEnemy * defensed);
+            damage = Mathf.RoundToInt(damageEnemy * defensed);
+            StartCoroutine(HitMaterialChange());
             Life.Loses(damage);
             if (damage <= 0)
             {
@@ -214,12 +244,42 @@ public class PlayerStats : MonoBehaviour
 
                 }
             }
+            statsBar.UpdateStatsBar();
+            statsBar2.UpdateStatsBar();
         }
+    }
+    public void GainExp(int exp)
+    {
+        level.GainExp(exp, gameController);
+        experienceBar.UpdateExpBar();
+    }
 
+    public void ExpInfoText(int exp)
+    {
+        combatTextManager.ExpText(ExitText, exp);
+    }
+
+    public void GainExp(GenericSkillClass skillClass, int exp)
+    {
+        skillClass.GainExp(exp, gameController);
+        experienceBar.UpdateExpBar();
+    }
+    public void LossesExp(GenericSkillClass skillClass, int exp)
+    {
+        skillClass.LosesExp(exp, gameController);
+        experienceBar.UpdateExpBar();
     }
     public void Buff()
     {
         buffedManager.Buff(2, 100, BuffedType.Armor, this);
+    }
+    private IEnumerator HitMaterialChange()
+    {
+       
+        skinned.material.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+        skinned.material.color = Color.white;
+
     }
     #endregion
 }

@@ -6,21 +6,22 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private CombatTextManager combatTextManager;
-    [SerializeField] private float Speed;
+    [SerializeField] private int expValue;
+    [SerializeField] private StatsBar statsBar;
+    [SerializeField] private float speed;
     [SerializeField] private float attackSpeed;
     [SerializeField] private float rangeAttack;
-    [SerializeField] private Material materialHit;
     [SerializeField] SkinnedMeshRenderer render;
     [SerializeField] private float maxLife;
-    [SerializeField] private int damage;
+    [SerializeField] private float damage;
     [SerializeField] private int chanceCritic;
     [SerializeField] private float myArmor;
     [SerializeField] private float myResistence;
     [SerializeField] private DamageType damageType;
     [SerializeField] private GameObject body;
-
-
     [SerializeField] private GameObject target;
+
+    private RangeOfVision rangeOfVision;
     private Animator anim;
     private Collider col;
     private NavMeshAgent agent;
@@ -40,7 +41,7 @@ public class EnemyController : MonoBehaviour
         get => currentLife;
         set
         {
-            currentLife += Mathf.FloorToInt(value);
+            currentLife += Mathf.RoundToInt(value);
             if (currentLife > MaxLife) currentLife = MaxLife;
             if (currentLife < 0) currentLife = 0;
         }
@@ -73,7 +74,7 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
-        MoveSpeed = Speed;
+        MoveSpeed = speed;
         render = GetComponentInChildren<SkinnedMeshRenderer>();
         anim = GetComponent<Animator>();
         col = GetComponent<Collider>();
@@ -81,10 +82,12 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         mat = render.material;
         CurrentLife = MaxLife;
-
+        rangeOfVision = GetComponentInChildren<RangeOfVision>();
+        agent.stoppingDistance = rangeAttack;
     }
     void Start()
     {
+        statsBar.UpdateStatsBar();
         isReadyAttack = true;
         isReadyWalk = true;
         agent.speed = MoveSpeed;
@@ -95,7 +98,7 @@ public class EnemyController : MonoBehaviour
     {
         if (!dead)
         {
-
+            target = rangeOfVision.CheckLook();
             if (currentLife == 0)
             {
                 StartCoroutine(DeadCourotine());
@@ -125,13 +128,23 @@ public class EnemyController : MonoBehaviour
         }
 
     }
-    public void MovePosition(Vector3 position)
+    public void LookTarget(Vector3 lookTarget)
     {
-        agent.isStopped = false;
-        agent.SetDestination(position);
-        if (Vector3.Distance(transform.position, target.transform.position) < rangeAttack)
+        Vector3 targ = new(lookTarget.x, -0.5f, lookTarget.z);
+        Vector3 direction = Vector3.RotateTowards(Vector3.forward, targ - transform.position, 5f, 5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(direction, Vector3.up), Time.deltaTime * 10f);
+    }
+    public void MovePosition(Vector3 enemyTarget)
+    {
+        if (!dead)
         {
-            AttackAnim();
+            agent.isStopped = false;
+            agent.SetDestination(enemyTarget);
+            if (Vector3.Distance(transform.position, target.transform.position) < rangeAttack)
+            {
+                LookTarget(enemyTarget);
+                AttackAnim();
+            }
         }
     }
     public void StartCountDownAttack()
@@ -151,7 +164,18 @@ public class EnemyController : MonoBehaviour
     private void DamageAttack()
     {
         bool isCritic = Critic.IsCritic(chanceCritic);
-        SendDamage sendDamage = new SendDamage(damage, isCritic, damageType);
+        float damageTemp = damage;
+        if (isCritic)
+        {
+            damageTemp = SkillCalculator.CalculeCriticAttack(damage);
+            
+        }
+        else
+        {
+            damageTemp = SkillCalculator.CalculeNormalAttack(damage);
+        }
+        SendDamage sendDamage = new SendDamage(Mathf.RoundToInt(damageTemp), isCritic, damageType);
+        
         target.SendMessage("TookDamage", sendDamage, SendMessageOptions.DontRequireReceiver);
     }
     public void TookDamage(SendDamage sendDamage)
@@ -173,28 +197,36 @@ public class EnemyController : MonoBehaviour
 
             float defensed = 1 - defenseTemp / 500;
             if (defensed < 0.1f) defensed = 0.1f;
-            int damageTaken = Mathf.FloorToInt(damageEnemy * defensed);
+            int damageTaken = Mathf.RoundToInt(damageEnemy * defensed);
             StartCoroutine("HitMaterialChange");
             CurrentLife = (damageTaken * -1);
-            if (isCritical)
+            if (damageTaken <= 0)
             {
-                combatTextManager.CriticText(gameObject.transform, damageTaken);
+                combatTextManager.MissText(gameObject.transform);
             }
             else
             {
-
-                combatTextManager.AttackText(gameObject.transform, damageTaken);
+                if (isCritical)
+                {
+                    combatTextManager.CriticText(gameObject.transform, damageTaken);
+                }
+                else
+                {
+                    combatTextManager.AttackText(gameObject.transform, damageTaken);
+                }
             }
+            statsBar.UpdateStatsBar();
         }
     }
     private IEnumerator HitMaterialChange()
     {
-        render.material = materialHit;
+        render.material.color = Color.red;
         yield return new WaitForSeconds(0.2f);
-        render.material = mat;
+        render.material.color = Color.white;
     }
     private IEnumerator DeadCourotine()
     {
+        target.SendMessage("GainExp", expValue, SendMessageOptions.DontRequireReceiver);
         GetComponentInChildren<StatsBar>().gameObject.SetActive(false);
         body.SetActive(false);
         anim.enabled = false;
@@ -205,40 +237,7 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(2f);
         Destroy(this.gameObject);
     }
-    public bool IsCritic(int chance)
-    {
-        if (Random.Range(0, 100) < chance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 
-
-    private void OnTriggerStay(Collider col)
-    {
-        if (col.CompareTag("Player"))
-        {
-            if (!target)
-            {
-                target = col.gameObject;
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider col)
-    {
-        if (col.CompareTag("Player"))
-        {
-            if (col.gameObject == target)
-            {
-                target = null;
-            }
-        }
-    }
     private IEnumerator AttackCountDown()
     {
         isReadyAttack = false;

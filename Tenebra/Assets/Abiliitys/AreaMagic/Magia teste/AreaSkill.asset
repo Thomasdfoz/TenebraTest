@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: AreaSkill
   m_EditorClassIdentifier: 
   skillType: 0
-  iconImage: {fileID: 21300000, guid: 2a1f3cba20f3e11498474a705db12fde, type: 3}
+  iconImage: {fileID: 158524363, guid: 3fbf1528046bf3b49a67e9c8b73c8ed8, type: 3}
   nameSkill: teste
   costMana: 100
-  countdown: 0
-  damage: 100
+  countdown: 10
+  damage: 5
   prefabEffect: {fileID: 6826850931394117962, guid: 7db36173ab5aacb4fb0f6cd37ba25bb7,
     type: 3}
   imageEffect: {fileID: 21300000, guid: 80d09a4e785514b4281d4baf7b3630e1, type: 3}
@@ -27,7 +27,7 @@ MonoBehaviour:
   triggerName: castSkill
   cast: {fileID: 6140239667881698734, guid: 9e289063153dfa94e9c9122661321604, type: 3}
   isBurning: 1
-  damageBurning: 10
-  timeDuration: 20
+  damageBurning: 3
+  timeDuration: 5
   width: 7
   height: 7

@@ -20,11 +20,10 @@ public class Cast : MonoBehaviour
     }
     public void InstantiateCast()
     {
-        GameObject missile = Instantiate(PrefabEffect, position.position, position.rotation);
+        GameObject Obj = Instantiate(PrefabEffect, position.position, position.rotation);
         if (MoveSpeed > 0)
         {
-           //missile.transform.position += new Vector3(0, 2, 0);
-            missile.GetComponent<Rigidbody>().velocity = (position.forward * MoveSpeed);
+            Obj.GetComponent<Rigidbody>().velocity = (position.forward * MoveSpeed);
         }
     }
 }

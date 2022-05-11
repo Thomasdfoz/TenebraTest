@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Basic Health buff
   m_EditorClassIdentifier: 
   skillType: 4
-  iconImage: {fileID: 0}
+  iconImage: {fileID: 21300000, guid: b9357b327f0c816468fa73a987e78220, type: 3}
   nameSkill: 
   costMana: 0
-  countdown: 0
+  countdown: 12
   prefabEffect: {fileID: 5140175516449752520, guid: df750369fe2c1bc46ad4561755900e32,
     type: 3}
-  healValue: 100
+  healValue: 20

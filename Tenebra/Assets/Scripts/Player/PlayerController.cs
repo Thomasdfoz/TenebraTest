@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private PlayerStats playerStats;
     private Animator playerAnim;
 
+    
 
     private FixedJoystick joystickMoviment;
     public GameObject selectedTarget;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     private Transform lookSkill;
     private bool isLookTargetSkill = false;
+    private float gravity;
 
     #endregion
 
@@ -53,9 +55,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (selectedTarget)
+        if (controller.isGrounded) gravity = 0;
+        else if(!controller.isGrounded && isWalk)
         {
-
+            gravity -= 9.81f * Time.deltaTime;
         }
         if (SelectedTarget == null)
         {
@@ -80,6 +83,7 @@ public class PlayerController : MonoBehaviour
                 SetTrigger("attack");
                 StopCoroutine("CoroutineAttack");
                 StartCoroutine("CoroutineAttack");
+
             }
         }
         if (isLookTargetSkill)
@@ -138,7 +142,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="triggerName">Esse é o trigger da animacao que vai chamar la no Animator</param>    
     public void SkillAnimation(Transform target, float timeLook, string triggerName)
     {
-       
+
         isLookTargetSkill = true;
         lookSkill = target;
         string p = (timeLook.ToString() + "/" + triggerName);
@@ -228,18 +232,17 @@ public class PlayerController : MonoBehaviour
     }
     public void AutoAttackMelee()
     {
-        bool isCritical = false;
+        bool isCritical = Critic.IsCritic(playerStats.ChanceCritic);
         float damage;
-        if (Critic.IsCritic(playerStats.ChanceCritic))
+        if (isCritical)
         {
-            damage = Random.Range(playerStats.Damage, playerStats.Damage * 2);
-            isCritical = true;
+            damage = SkillCalculator.CalculeCriticAttack(playerStats.Damage);
         }
         else
         {
-            damage = Random.Range((playerStats.Damage * 0.1f), playerStats.Damage);
+            damage = SkillCalculator.CalculeNormalAttack(playerStats.Damage);
         }
-        SendDamage sendDamage = new(Mathf.FloorToInt(damage), isCritical, playerStats.DamageType);
+        SendDamage sendDamage = new(Mathf.RoundToInt(damage), isCritical, playerStats.DamageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
@@ -250,11 +253,11 @@ public class PlayerController : MonoBehaviour
         int damageFinal = 0;
         if (damageType == DamageType.magic)
         {
-            damageFinal = SkillCalculator.Calcule(damage, playerStats.MagicSkill.CurrentLevel);
+            damageFinal = SkillCalculator.CalculeAbility(damage, playerStats.MagicSkill.CurrentLevel);
         }
         else if (damageType == DamageType.physical)
         {
-            damageFinal = SkillCalculator.Calcule(damage, Mathf.FloorToInt(playerStats.Damage));
+            damageFinal = SkillCalculator.CalculeAbility(damage, playerStats.MeleeSkill.CurrentLevel);
         }
 
         SendDamage sendDamage = new(damageFinal, false, damageType);
@@ -265,7 +268,7 @@ public class PlayerController : MonoBehaviour
     }
     public void SpecialAttackDistance(DamageType damageType, float damage)
     {
-        SendDamage sendDamage = new(Mathf.FloorToInt(damage + playerStats.Damage), false, damageType);
+        SendDamage sendDamage = new(Mathf.RoundToInt(damage + playerStats.Damage), false, damageType);
         if (selectedTarget)
         {
             selectedTarget.SendMessage("TookDamage", sendDamage);
@@ -310,9 +313,8 @@ public class PlayerController : MonoBehaviour
             moveSpeed = SpeedV * playerStats.MoveSpeed;
         }
 
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
-
-        if (direction.magnitude > 0.1f)
+        Vector3 direction = new Vector3(horizontal, gravity, vertical);
+        if (direction.x != 0 || direction.z != 0)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             playerBody.transform.rotation = Quaternion.Lerp(playerBody.transform.rotation, Quaternion.Euler(0, targetAngle, 0), Time.deltaTime * 7f);

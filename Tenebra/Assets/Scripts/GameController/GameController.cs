@@ -1,31 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
-    // isso aki vai ficar dentro do scriptable da magia
-    public AnimationClip animSpecialAttack;
-    public Color color;
-
     [Header("Main")]
-    public GameObject player;
+    [SerializeField] private GameObject player;
+    [SerializeField] private TextMeshProUGUI infoText;
+    private SavedAndLoad save;
     private PlayerController playerController;
     private PlayerStats playerStats;
-    private ButtonsActive buttonsActive;
+    private ButtonsAndTextManager buttonsActive;
 
     public Skills_Scriptable[] skill;
 
     public PlayerController PlayerController { get => playerController; set => playerController = value; }
     public PlayerStats PlayerStats { get => playerStats; set => playerStats = value; }
-    public ButtonsActive ButtonsActive { get => buttonsActive; set => buttonsActive = value; }
+    public ButtonsAndTextManager ButtonsActive { get => buttonsActive; set => buttonsActive = value; }
+    public TextMeshProUGUI InfoText { get => infoText; set => infoText = value; }
+    public GameObject Player { get => player; set => player = value; }
 
+    void Awake()
+    {
+        PlayerStats = Player.GetComponent<PlayerStats>();
+        PlayerController = Player.GetComponent<PlayerController>();
+        ButtonsActive = GetComponent<ButtonsAndTextManager>();
+        save = GetComponent<SavedAndLoad>();
+            
+    }
     // Start is called before the first frame update
     void Start()
     {
-        PlayerStats = player.GetComponent<PlayerStats>();
-        PlayerController = player.GetComponent<PlayerController>();
-        ButtonsActive = GetComponent<ButtonsActive>();
+        save.LoadGame();
     }
 
     // Update is called once per frame
@@ -34,23 +42,28 @@ public class GameController : MonoBehaviour
         //fazer igual o burning damage para dar um burning heal tambem nas potion e magias desse jeito
         if (PlayerStats.Life.CurrentValue <= 0)
         {
-            player.gameObject.SetActive(false);
+            Player.gameObject.SetActive(false);
             PlayerStats.IsDead = true;
+            ButtonsActive.ActiveAll(false);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            save.SaveGame();
         }
         #region teste de burning
         //----------------------------teste de burning esse codigo deve ficar dentro da magia ou flecha com o dano burning --------------
         if (Input.GetKeyDown(KeyCode.P))
         {
-            BurningManager.InvokeBurning(player, "Fogo", 15, 2, DamageType.magic);
+            BurningManager.InvokeBurning(Player, "Fogo", 15, 2, DamageType.magic);
             
         }
         if (Input.GetKeyDown(KeyCode.K))
         {
-            BurningManager.InvokeBurning(player, "Veneno", 5, 20, DamageType.magic);
+            BurningManager.InvokeBurning(Player, "Veneno", 5, 20, DamageType.magic);
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
-            BurningManager.InvokeBurning(player, "Gelo", 10, 4, DamageType.magic);
+            BurningManager.InvokeBurning(Player, "Gelo", 10, 4, DamageType.magic);
         }
         #endregion
         //test
@@ -64,6 +77,19 @@ public class GameController : MonoBehaviour
         {
             ButtonsActive.ActiveAll(false);
         }
+    }
+
+    public void SetTextInfo(string text)
+    {
+        StopAllCoroutines();
+        infoText.text = text;
+        StartCoroutine(DeleteText());
+    }
+
+    private IEnumerator DeleteText()
+    {
+        yield return new WaitForSeconds(5);
+        SetTextInfo(" ");
     }
 
     

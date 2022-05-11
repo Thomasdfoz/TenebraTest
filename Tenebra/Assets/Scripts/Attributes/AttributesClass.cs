@@ -20,13 +20,14 @@ public class AttributesClass
     public int CurrentValue
     {
         get => currentValue;
+        set => currentValue = value;
 
     }
     public void Gain(float value)
     {
         if (value > 0)
         {
-            int valueINT = Mathf.FloorToInt(value);
+            int valueINT = Mathf.RoundToInt(value);
             currentValue += valueINT;
             if (currentValue > maxValue) currentValue = MaxValue;
         }
