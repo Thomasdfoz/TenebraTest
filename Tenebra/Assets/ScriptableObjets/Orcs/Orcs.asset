@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f26e9e648ae6f459d84cc8ca149dd6, type: 3}
+  m_Name: Orcs
+  m_EditorClassIdentifier: 
+  race: 1
+  textInfoRace: "    Os Orcs s\xE3o criaturas fortes e musculosas, com uma altura
+    maior que a de um humano normal, eles vivem geralmente nos desertos e florestas."
+  classes:
+  - {fileID: 11400000, guid: 64a4a5247a1200041a1675fad2ee4cb6, type: 2}
+  - {fileID: 11400000, guid: 4c61b5dae8b50d8429d9b3ed7b8beba4, type: 2}
+  - {fileID: 11400000, guid: f18c2a08f47563b4f9ed6dd870c196ef, type: 2}
+  - {fileID: 11400000, guid: 4939ae47ae18e724ca7ec9d7f88c1227, type: 2}

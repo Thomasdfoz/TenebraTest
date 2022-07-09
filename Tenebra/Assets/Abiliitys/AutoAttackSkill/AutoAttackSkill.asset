@@ -17,7 +17,7 @@ MonoBehaviour:
   nameSkill: Teste
   costMana: 30
   countdown: 7
-  animationClip: {fileID: 7400000, guid: af8a305bec60a0d4bb2f51a513fe1e33, type: 3}
+  animationClip: {fileID: 7400000, guid: 07ee6cf40295fae429442bc0c6bba283, type: 2}
   triggerName: attackSkill
   damage: 10
   damageType: 0

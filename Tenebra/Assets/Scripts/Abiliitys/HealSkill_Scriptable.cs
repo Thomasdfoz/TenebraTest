@@ -14,5 +14,6 @@ public class HealSkill_Scriptable : Skills_Scriptable
         GameObject effect = Instantiate(prefabEffect, abiliityButton.GameController.Player.transform);
         int valueTemp = SkillCalculator.CalculeAbility(healValue, abiliityButton.GameController.PlayerStats.MagicSkill.CurrentLevel);
         abiliityButton.GameController.PlayerStats.Heal(valueTemp);
+        abiliityButton.GameController.PlayerStats.HealMaterialChange();
     }
 }

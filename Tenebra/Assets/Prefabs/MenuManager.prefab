@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4776177580624351183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4776177580624351177}
+  - component: {fileID: 4776177580624351182}
+  - component: {fileID: 6524846961052198978}
+  m_Layer: 0
+  m_Name: MenuManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4776177580624351177
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4776177580624351183}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30, y: 3.918696, z: 30}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4776177580624351182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4776177580624351183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a13e0479bb75ecf42808a655febdb1b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  painelMain: {fileID: 0}
+  painelPlay: {fileID: 0}
+  painelCredits: {fileID: 0}
+  anime: {fileID: 0}
+--- !u!114 &6524846961052198978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4776177580624351183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818772d362e750044b3df0362fce0944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 0}
+  brows: {fileID: 0}
+  eyes: {fileID: 0}
+  hairs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  belt: {fileID: 0}
+  boots: {fileID: 0}
+  jacket: {fileID: 0}
+  pants: {fileID: 0}
+  shirt: {fileID: 0}
+  shirtNoSleeves: {fileID: 0}
+  eyesColors:
+  - {fileID: 2100000, guid: 16efa91bff0fba24aa24dee308c663f1, type: 2}
+  - {fileID: 2100000, guid: f825014e7f1eb0a4a91ad20c82ea124e, type: 2}
+  - {fileID: 2100000, guid: d71e18f575c364341a97d4fa5f989f6d, type: 2}
+  - {fileID: 2100000, guid: 2d2beb058cc1db24b80b24d74c656a07, type: 2}
+  browsColors:
+  - {fileID: 2100000, guid: b9f7f26984876324c9df9949e9a0691d, type: 2}
+  - {fileID: 2100000, guid: 41ff04de2440a9c4aa0a52a2d058afd5, type: 2}
+  - {fileID: 2100000, guid: 8980c7da3afe15c46adebdfd3678878b, type: 2}
+  - {fileID: 2100000, guid: 147438fbd50e6094598bf7bbf3773433, type: 2}
+  hairsColors1:
+  - {fileID: 2100000, guid: 8b2d820726316804194072bb26f2b769, type: 2}
+  - {fileID: 2100000, guid: 253bb43f048bdfb49851ec9dcef20d0c, type: 2}
+  - {fileID: 2100000, guid: 538602ad990be8842937ef89e70d5052, type: 2}
+  - {fileID: 2100000, guid: 1be1c6240772b79498871b90fbcebc78, type: 2}
+  hairsColors2:
+  - {fileID: 2100000, guid: 11772cacdb22fbf4aad5cf9d3e01e94d, type: 2}
+  - {fileID: 2100000, guid: ba48e52cfb92f9b419e4470db326d48c, type: 2}
+  - {fileID: 2100000, guid: ac94bd60ed31b6044ad3799e731b110c, type: 2}
+  - {fileID: 2100000, guid: 797ae22d2bc102e448a885d85de2d7dc, type: 2}
+  ArmorsColors:
+  - {fileID: 2100000, guid: cb35b5bed1a806e4da323b022717acd1, type: 2}
+  - {fileID: 2100000, guid: 50213840bc41dbd4198881600d1ceb5a, type: 2}
+  - {fileID: 2100000, guid: 6842d586e04c60149875a1b54d6be9fe, type: 2}
+  SkinsColors:
+  - {fileID: 2100000, guid: 6168ac1ccad3e8c448a1d93032018dfa, type: 2}
+  - {fileID: 2100000, guid: 3866c0ab18b5e934599b1e641f6eafc5, type: 2}
+  - {fileID: 2100000, guid: 95517434e18715b4dad5b8565d91c44d, type: 2}
+  eyesInt: 0
+  browsInt: 0
+  hairsColors1Int: 0
+  hairsColors2Int: 0
+  ArmorsInt: 0
+  SkinsInt: 0

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03343e94eff6689458f41d759a91a3f8, type: 3}
+  m_Name: Rogue
+  m_EditorClassIdentifier: 
+  classe: 3
+  textInfoClasse: 
+  prefab: {fileID: 8587105107617074749, guid: 987db7664b04bf144a0462bf6fa42c7e, type: 3}

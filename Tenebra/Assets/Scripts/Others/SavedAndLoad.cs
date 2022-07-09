@@ -10,15 +10,9 @@ public class SavedAndLoad : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/save.dat");
 
-        SaveData data = new SaveData();
-
-        data.Level = playerStats.Level.CurrentLevel;
-        data.life = playerStats.Life.CurrentValue;
-        data.mana = playerStats.Mana.CurrentValue;
-        data.meleeSkill = playerStats.MeleeSkill.CurrentLevel;
-        data.distanceSkill = playerStats.DistanceSkill.CurrentLevel;
-        data.magicSkill = playerStats.MagicSkill.CurrentLevel;
-        data.defenseSkill = playerStats.DefenseSkill.CurrentLevel;
+        CharSave data = new CharSave(playerStats.Level.CurrentLevel, playerStats.Life.CurrentValue, playerStats.Mana.CurrentValue,
+            playerStats.MeleeSkill.CurrentLevel, playerStats.DistanceSkill.CurrentLevel, playerStats.MagicSkill.CurrentLevel,
+            playerStats.DefenseSkill.CurrentLevel, playerStats.CharSkin);
 
         bf.Serialize(file, data);
         file.Close();
@@ -29,15 +23,16 @@ public class SavedAndLoad : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.Open);
 
-        SaveData data = (SaveData)bf.Deserialize(file);
+        CharSave data = (CharSave)bf.Deserialize(file);
         file.Close();
 
-        playerStats.Level.CurrentLevel = data.Level;
+        playerStats.Level.CurrentLevel = data.level;
         playerStats.Life.CurrentValue = data.life;
         playerStats.Mana.CurrentValue = data.mana;
         playerStats.MeleeSkill.CurrentLevel = data.meleeSkill;
         playerStats.DistanceSkill.CurrentLevel = data.distanceSkill;
         playerStats.MagicSkill.CurrentLevel = data.magicSkill;
         playerStats.DefenseSkill.CurrentLevel = data.defenseSkill;
-}
+        playerStats.CharSkin = data.charSkin;
+    }
 }

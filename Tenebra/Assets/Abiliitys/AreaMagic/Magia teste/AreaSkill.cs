@@ -7,7 +7,7 @@ public class AreaSkill : MonoBehaviour
 {
     const int BURNINGTIME = 2;
 
-    public AreaSkills_Scriptable skillObject;
+    [SerializeField] private AreaSkills_Scriptable skillObject;
     private List<Collider> targetsBurningDamage = new List<Collider>();
     private GameController gameController;
     private GameObject target;

@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     public GameObject circleRange;
     public LayerMask layer;
     private PlayerStats playerStats;
-    private Animator playerAnim;
+    public Animator playerAnim;
 
     
 
@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerAnim = playerBody.GetComponent<Animator>();
+        
         playerStats = GetComponent<PlayerStats>();
         joystickMoviment = gameController.ButtonsActive.moviment.GetComponent<FixedJoystick>();
         circleRange.SetActive(false);
@@ -50,6 +50,10 @@ public class PlayerController : MonoBehaviour
         isReadyAttack = true;
         isAttacking = false;
         isLookTarget = false;
+    }
+    void LateUpdate()
+    {
+        playerAnim = playerBody.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -90,8 +94,11 @@ public class PlayerController : MonoBehaviour
         {
             LookTarget(lookSkill);
         }
-        Move();
-        Animations();
+        if (playerAnim != null)
+        {
+            Move();
+            Animations();
+        }
     }
     #region ----------------------My Functions------------------
     private void Animations()
@@ -146,7 +153,7 @@ public class PlayerController : MonoBehaviour
         isLookTargetSkill = true;
         lookSkill = target;
         string p = (timeLook.ToString() + "/" + triggerName);
-        StartCoroutine("LookTargetTime", p);
+        StartCoroutine(LookTargetTime(p));
     }
     /// <summary>
     /// Nâo olha para o avo, espera um tempo e depois executa o trigger, 

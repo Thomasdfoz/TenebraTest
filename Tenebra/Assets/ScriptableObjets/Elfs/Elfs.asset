@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f26e9e648ae6f459d84cc8ca149dd6, type: 3}
+  m_Name: Elfs
+  m_EditorClassIdentifier: 
+  race: 2
+  textInfoRace: "    Os Elfos s\xE3o criaturas muito inteligentes, vivem nas florestas
+    com sua cidade com constru\xE7\xF5es bem desenvolvidas e a sua tecnologia Elfa."
+  classes:
+  - {fileID: 11400000, guid: 0ed23ed40b8fb494bb7f9a9cafea1e0e, type: 2}
+  - {fileID: 11400000, guid: a00b913b71cf8304fa0e3d5ac4b9daf6, type: 2}
+  - {fileID: 11400000, guid: 9b8a510a6aea6ed489a017d65982ba12, type: 2}
+  - {fileID: 11400000, guid: 24cf79f28cae12c46946ceae5abc260a, type: 2}

@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Object
+  - Archer
+  - Mage
+  - Knight
+  - Bonus
   layers:
   - Default
   - TransparentFX

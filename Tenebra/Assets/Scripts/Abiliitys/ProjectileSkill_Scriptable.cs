@@ -31,13 +31,13 @@ public class ProjectileSkill_Scriptable : Skills_Scriptable
         padSkillButton.projectileEffect.rectTransform.sizeDelta = new Vector2(width, height);
         joy.gameObject.SetActive(true);
         IsSuccess = false;
-        
+
 
     }
     public override void ProjectileRotation(AbiliityButton abiliityButton)
     {
         base.ProjectileRotation(abiliityButton);
-        Vector3 direction = new (joy.Horizontal, 0.1f, joy.Vertical);
+        Vector3 direction = new(joy.Horizontal, 0.1f, joy.Vertical);
         if (direction.magnitude > 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
@@ -70,13 +70,13 @@ public class ProjectileSkill_Scriptable : Skills_Scriptable
         c.Constructor(padSkillButton.spanwPoint.transform, prefab, moveSpeed);
         if (animationClip.events.Length <= 0)
         {
-            AnimationEvent AnimEvent = new ();
+            AnimationEvent AnimEvent = new();
             AnimEvent.functionName = "CastSkill";
             AnimEvent.time = TimeAnimationCast;
             AnimEvent.objectReferenceParameter = c;
             animationClip.AddEvent(AnimEvent);
 
-            AnimationEvent AnimEvent2 = new ();
+            AnimationEvent AnimEvent2 = new();
             AnimEvent2.functionName = "AnimationEnd";
             AnimEvent2.time = TimeAnimation;
             animationClip.AddEvent(AnimEvent2);

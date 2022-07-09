@@ -8,11 +8,14 @@ public class GameController : MonoBehaviour
 {
     [Header("Main")]
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject playerBody;
     [SerializeField] private TextMeshProUGUI infoText;
     private SavedAndLoad save;
     private PlayerController playerController;
     private PlayerStats playerStats;
     private ButtonsAndTextManager buttonsActive;
+    private LoadCharGame playerLoad;
+    private ClassesScriptable classe;
 
     public Skills_Scriptable[] skill;
 
@@ -28,14 +31,20 @@ public class GameController : MonoBehaviour
         PlayerController = Player.GetComponent<PlayerController>();
         ButtonsActive = GetComponent<ButtonsAndTextManager>();
         save = GetComponent<SavedAndLoad>();
+        playerLoad = FindObjectOfType<LoadCharGame>();
             
     }
     // Start is called before the first frame update
     void Start()
     {
-        save.LoadGame();
+        StartCoroutine(StartChar());
     }
-
+    IEnumerator StartChar()
+    {
+        yield return new WaitForEndOfFrame();
+        classe = playerLoad.charClasse;
+        Instantiate(classe.prefab, playerBody.transform);
+    }
     // Update is called once per frame
     void Update()
     {

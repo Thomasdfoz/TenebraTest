@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f26e9e648ae6f459d84cc8ca149dd6, type: 3}
+  m_Name: Undeads
+  m_EditorClassIdentifier: 
+  race: 3
+  textInfoRace: "    Os Mortos s\xE3o criaturas com muita resist\xEAncia e com habilidades
+    sombrias, eles s\xE3o encontrados geralmente em cemit\xE9rios e cavernas."
+  classes:
+  - {fileID: 11400000, guid: d4e585ff795b76f448060fb159dc75cd, type: 2}
+  - {fileID: 11400000, guid: 144ce38aa6dfc76418f85653c1e5eb51, type: 2}
+  - {fileID: 11400000, guid: 3ee32810caaf4b049bd17fcead345ae6, type: 2}
+  - {fileID: 11400000, guid: 8c4b713ddb0ca0549b41e2e9dedc39c4, type: 2}

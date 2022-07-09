@@ -6,6 +6,7 @@ public class PlayerStats : MonoBehaviour
 {
     #region ------------------------Main---------------------------
     [Header("Main")]
+    [SerializeField] private CharSkin charSkin;
     [SerializeField] private CombatTextManager combatTextManager;
     [SerializeField] private Transform ExitText;
     [SerializeField] private BuffedManager buffedManager;
@@ -13,7 +14,9 @@ public class PlayerStats : MonoBehaviour
     private WaeponType waeponType;
     private DamageType damageType;
     private bool isDead;
-    private SkinnedMeshRenderer skinned;
+    public Color colorHit;
+    public Color colorHeal;
+    private SkinnedMeshRenderer[] skinned;
     #endregion
     #region ------------------------StatsBar---------------------------
     [Header("StatsBar")]
@@ -157,11 +160,12 @@ public class PlayerStats : MonoBehaviour
     public DamageType DamageType { get => damageType; set => damageType = value; }
     public bool IsDead { get => isDead; set => isDead = value; }
     public LevelClass Level { get => level; set => level = value; }
+    public CharSkin CharSkin { get => charSkin; set => charSkin = value; }
     #endregion
 
     private void Awake()
     {
-        skinned = GetComponentInChildren<SkinnedMeshRenderer>();
+        skinned = GetComponentsInChildren<SkinnedMeshRenderer>();
         gameController = FindObjectOfType<GameController>();
     }
     // Start is called before the first frame update
@@ -201,6 +205,8 @@ public class PlayerStats : MonoBehaviour
     {
         Life.Gain(healValue);
         combatTextManager.HealText(ExitText, healValue);
+        statsBar.UpdateStatsBar();
+        statsBar2.UpdateStatsBar();
     }
     public void TookDamage(SendDamage sendDamage)
     {
@@ -226,7 +232,7 @@ public class PlayerStats : MonoBehaviour
             defensed = 1 - (defenseTemp / 500);
             if (defensed < 0.1f) defensed = 0.1f;
             damage = Mathf.RoundToInt(damageEnemy * defensed);
-            StartCoroutine(HitMaterialChange());
+            StartCoroutine(MaterialChange(colorHit, 0.2f));
             Life.Loses(damage);
             if (damage <= 0)
             {
@@ -273,13 +279,22 @@ public class PlayerStats : MonoBehaviour
     {
         buffedManager.Buff(2, 100, BuffedType.Armor, this);
     }
-    private IEnumerator HitMaterialChange()
+    private IEnumerator MaterialChange(Color color, float temp)
     {
-       
-        skinned.material.color = Color.red;
-        yield return new WaitForSeconds(0.2f);
-        skinned.material.color = Color.white;
-
+        foreach (var item in skinned)
+        {
+            item.material.color = color;
+        }
+        yield return new WaitForSeconds(temp);
+        foreach (var item in skinned)
+        {
+            item.material.color = Color.white;
+        }
     }
+    public void HealMaterialChange()
+    {
+        StartCoroutine(MaterialChange(colorHeal, 0.3f));
+    }
+
     #endregion
 }

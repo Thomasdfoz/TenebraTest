@@ -16,4 +16,20 @@ public class PadSkillButton : MonoBehaviour
     [Header("Limites")]
     public RectTransform[] limites;
 
+    void Start()
+    {
+       
+        StartCoroutine(FindPoints());
+    }
+
+    private IEnumerator FindPoints()
+    {
+        yield return new WaitForEndOfFrame();
+        spanwPoint = GameObject.Find("SpawnPoint");
+        if (spanwPoint == null)
+        {
+            StartCoroutine(FindPoints());
+        }
+    }
+
 }

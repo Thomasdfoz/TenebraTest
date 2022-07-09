@@ -5,6 +5,10 @@ using UnityEngine;
 public class EventsScript : MonoBehaviour
 {
     public PlayerController playerController;
+    void Start()
+    {
+        playerController = FindObjectOfType<PlayerController>();
+    }
     private void AutoAttackMelee()
     {
         playerController.AutoAttackMelee();

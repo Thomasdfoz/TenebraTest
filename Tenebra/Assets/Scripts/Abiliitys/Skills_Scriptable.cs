@@ -55,15 +55,4 @@ public abstract class Skills_Scriptable : ScriptableObject
     public virtual void MoveAreaSkill(AbiliityButton abiliityButton) { }
     #endregion
 
-
-    /*
-    public int costLife;
-    public int damage;
-    public int damageBurning;
-    public int timeDuration;
-    public GameObject prefabEffect;
-    public Sprite imageEffect;
-    public int width;
-    public int height;
-    */
 }
