@@ -21,6 +21,7 @@ public class AutoAttackSkill_Scriptable : Skills_Scriptable
     Joystick joy;
     public override void DownClick(AbiliityButton abiliityButton)
     {
+        
         base.DownClick(abiliityButton);
         this.gameController = abiliityButton.GameController;
         this.obj = abiliityButton.gameObject;

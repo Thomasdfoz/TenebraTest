@@ -237,6 +237,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(playerStats.AttackSpeed + time);
         isReadyAttack = true;
     }
+    public void AutoAttackDistance()
+    {
+
+    }
     public void AutoAttackMelee()
     {
         bool isCritical = Critic.IsCritic(playerStats.ChanceCritic);

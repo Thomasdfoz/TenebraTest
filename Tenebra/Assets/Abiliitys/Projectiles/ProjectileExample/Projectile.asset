@@ -18,7 +18,7 @@ MonoBehaviour:
   costMana: 50
   countdown: 8
   damage: 20
-  prefab: {fileID: 265256768519259034, guid: 7d0c90d66109c8e47be30673cad2bf1f, type: 3}
+  prefab: {fileID: 2569505161740467896, guid: fefdecd23f6ebb14cbc165f93b336322, type: 3}
   imageEffect: {fileID: -1400669831, guid: 4340e50c1ca2cab45af9f53e29ebf612, type: 3}
   animationClip: {fileID: 7400000, guid: 5c662b005d197fe49a4add9fa83b414b, type: 2}
   TimeAnimationCast: 0.3

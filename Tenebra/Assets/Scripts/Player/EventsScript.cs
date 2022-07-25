@@ -17,22 +17,9 @@ public class EventsScript : MonoBehaviour
     {
         playerController.AnimationEnd();
     }
-    private void AutoAttackDistance(string parms)
+    private void AutoAttackDistance()
     {
-        string[] cut = parms.Split('/');
-        string StringDamageType = cut[0];
-        float damage = float.Parse(cut[1]);
-        //string StringwaeponType = cut[2];
-        DamageType damageType;
-        if (StringDamageType == DamageType.physical.ToString())
-        {
-            damageType = DamageType.physical;
-        }
-        else
-        {
-            damageType = DamageType.magic;
-        }
-        playerController.SpecialAttackDistance(damageType, damage);
+        playerController.AutoAttackDistance();
     }
     private void CastSkill(Cast cast)
     {

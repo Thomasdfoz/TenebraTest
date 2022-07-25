@@ -38,7 +38,8 @@ public class AbiliityButton : MonoBehaviour, IPointerUpHandler, IPointerDownHand
     private void Awake()
     {
         GameController = FindObjectOfType<GameController>();
-        PadSkillButton = FindObjectOfType<PadSkillButton>();
+
+        padSkillButton = FindObjectOfType<PadSkillButton>();
         Joy = GetComponentInChildren<FixedJoystick>();
     }
 
