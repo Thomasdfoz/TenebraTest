@@ -100,7 +100,7 @@ public class PlayerStats : MonoBehaviour
     }
     public float AttackSpeed
     {
-        get => (1 / (attackSpeed / 100));
+        get => attackSpeed;
         set
         {
             if (value > 200)
@@ -149,17 +149,20 @@ public class PlayerStats : MonoBehaviour
     public bool IsDead { get => isDead; set => isDead = value; }
     #endregion
 
-
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Range = 1;
         MoveSpeed = 1;
         Damage = 30;
-        AttackSpeed = 1;
+        AttackSpeed = 200;
         Defense = 100;
         Resistence = 0;
         chanceCritic = 100;
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+       
 
     }
 

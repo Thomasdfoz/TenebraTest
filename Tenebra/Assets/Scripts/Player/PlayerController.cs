@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private bool isReadyAttack;
     private bool isAnimationEnd;
     private bool isLookTarget;
-    private float attackSpeedAnim;
+    public float attackSpeedAnim;
 
     private Transform lookSkill;
     private bool isLookTargetSkill = false;
@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
     private void Animations()
     {
         attackSpeedAnim = playerStats.AttackSpeed / 100;
-        if (playerStats.AttackSpeed < 80)
+        if (playerStats.AttackSpeed < 0.8f)
         {
             attackSpeedAnim = 0.8f;
         }
@@ -138,7 +138,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="triggerName">Esse é o trigger da animacao que vai chamar la no Animator</param>    
     public void SkillAnimation(Transform target, float timeLook, string triggerName)
     {
-       
+
         isLookTargetSkill = true;
         lookSkill = target;
         string p = (timeLook.ToString() + "/" + triggerName);
